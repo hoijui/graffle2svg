@@ -488,7 +488,7 @@ class GraffleParser(object):
                style="overflow:visible;">
               <path
                  id="path3666"
-                 d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+                 d="M 0.0,0.0 L 0.0,-2.5 L -12.5,0.0 L 0.0,2.5 L 0.0,0.0 z "
                  style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
                  transform="scale(0.8) rotate(180) translate(12.5,0)" />
             </marker></defs>""")

@@ -18,11 +18,7 @@ import fileinfo
 
 def mkHex(s):
     # s is a string of a float
-    h = "%x"%(int(min(float(s)*256, 255)))
-    if h[0] == " ":
-        h = "0"+h[1]
-    if len(h) == 1:
-        h = "0" + h
+    h = "%02x"%(int(min(float(s)*256, 255)))
     return h
 
 def nodeListGen(nodelist):

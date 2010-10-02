@@ -323,7 +323,7 @@ class GraffleParser(object):
         if graphic.get("Rotation") is not None:
             extra_opts["Rotation"] = float(graphic["Rotation"])
             
-        if shape == 'Rectangle' or shape == 'RoundRect':
+        if shape == 'Rectangle':
             coords = self.extractBoundCOordinates(graphic['Bounds'])
             if graphic.get("ImageID") is not None:
                 # TODO: images
@@ -350,6 +350,24 @@ class GraffleParser(object):
                                         ry=radius,
                                         **extra_opts)
 
+        elif shape == "RoundRect":
+            coords = self.extractBoundCOordinates(graphic['Bounds'])
+            sty = graphic.get("Style",{})
+            stroke = sty.get("stroke",{})
+            radius = stroke.get("CornerRadius",None)
+
+            x, y   = coords[0], coords[1]
+            width  = coords[2]# - coords[0]
+            height = coords[3]# - coords[1]
+            import math
+            self.svg_addRect(self.svg_current_layer,
+                             x = x,
+                             y = y,
+                             width = width,
+                             height = height,
+                             rx=(width - math.sqrt(width*width-height*height))/2,
+                             ry=height/2,
+                             **extra_opts)            
         elif shape == "HorizontalTriangle":
             bounds = self.extractBoundCOordinates(graphic['Bounds'])
             self.svg_addHorizontalTriangle(self.svg_current_layer,

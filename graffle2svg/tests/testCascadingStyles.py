@@ -7,13 +7,13 @@ class TestDefaults(TestCase):
         self.cs = CascadingStyles({"font":"arial","font-size":"12pt"})
         
     def testNone(self):
-        assert str(self.cs) == ""
+        self.assertEqual(str(self.cs), "")
         
     def testRemoveScope(self):
         self.cs.appendScope()
         self.cs["font"] = "newfont"
         self.cs.popScope()
-        assert str(self.cs) == ""
+        self.assertEqual(str(self.cs), "")
         
         
     def testIgnoreDefault(self):
@@ -21,7 +21,7 @@ class TestDefaults(TestCase):
         self.cs["font"] = "newfont"
         self.cs.appendScope()
         self.cs["font"] = "arial"
-        assert str(self.cs) == ""
+        self.assertEqual(str(self.cs), "")
         
         
 class TestScope(TestCase):

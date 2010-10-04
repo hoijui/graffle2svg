@@ -506,9 +506,8 @@ class GraffleParser(object):
                style="overflow:visible;">
               <path
                  id="path3666"
-                 d="M 0.0,0.0 L 0.0,-2.5 L -12.5,0.0 L 0.0,2.5 L 0.0,0.0 z "
-                 style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
-                 transform="scale(0.8) rotate(180) translate(12.5,0)" />
+                 d="M -10,0.0 L -10.0,-2.0 L 0.0,0.0 L -10.0,2.0 z "
+                 style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;" />
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -524,9 +523,8 @@ class GraffleParser(object):
                style="overflow:visible">
               <path
                  id="path3663"
-                 d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-                 style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
-                 transform="scale(0.8) translate(12.5,0)" />
+                 d="M 10,0.0 L 10.0,-2.0 L 0.0,0.0 L 10.0,2.0 z"
+                 style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none" />
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:

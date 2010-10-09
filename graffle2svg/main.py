@@ -461,11 +461,11 @@ class GraffleParser(object):
                 width = stroke["Width"]
                 self.style["stroke-width"]="%fpx"%float(width)
             
-        if style.get("shadow",{}).get("Draws","") != "NO":
+        if style.get("shadow",{}).get("Draws","NO") != "NO":
             # for some reason graffle has a shadow by default
             self.required_defs.add("DropShadow")
             self.style["filter"]="url(#DropShadow)"
-            
+
     def svgSetGraffleFont(self, font):
         if font is None: return
         fontstuffs = []

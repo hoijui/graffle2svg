@@ -499,15 +499,15 @@ class GraffleParser(object):
             # TODO
             p = xml.dom.minidom.parseString("""
             <defs><marker
-               orient="auto"
-               refY="0.0"
-               refX="0.0"
-               id="Arrow1Lend"
-               style="overflow:visible;">
+               orient='auto'
+               refY='0.0'
+               refX='0.0'
+               id='Arrow1Lend'
+               style='overflow:visible;'>
               <path
-                 id="path3666"
-                 d="M -10,0.0 L -10.0,-2.0 L 0.0,0.0 L -10.0,2.0 z "
-                 style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;" />
+                 id='path3666'
+                 d='M -10,0.0 L -10.0,-2.0 L 0.0,0.0 L -10.0,2.0 z '
+                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;' />
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -516,15 +516,15 @@ class GraffleParser(object):
         if "Arrow1Lstart" in self.required_defs:
             p = xml.dom.minidom.parseString("""
             <defs><marker
-               orient="auto"
-               refY="0.0"
-               refX="0.0"
-               id="Arrow1Lstart"
-               style="overflow:visible">
+               orient='auto'
+               refY='0.0'
+               refX='0.0'
+               id='Arrow1Lstart'
+               style='overflow:visible'>
               <path
-                 id="path3663"
-                 d="M 10,0.0 L 10.0,-2.0 L 0.0,0.0 L 10.0,2.0 z"
-                 style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none" />
+                 id='path3663'
+                 d='M 10,0.0 L 10.0,-2.0 L 0.0,0.0 L 10.0,2.0 z'
+                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none'/>
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -532,12 +532,12 @@ class GraffleParser(object):
                 
         if "DropShadow" in self.required_defs:
             p = xml.dom.minidom.parseString("""
-            <defs><filter id="DropShadow" filterRes="100" x="0" y="0">
-               <feGaussianBlur stdDeviation="3" result="MyBlur"/>
-               <feOffset in="MyBlur" dx="2" dy="4" result="movedBlur"/>
+            <defs><filter id='DropShadow' filterRes='100' x='0' y='0'>
+               <feGaussianBlur stdDeviation='3' result='MyBlur'/>
+               <feOffset in='MyBlur' dx='2' dy='4' result='movedBlur'/>
                <feMerge>
-                   <feMergeNode in="movedBlur"/>
-                   <feMergeNode in="SourceGraphic"/>
+                   <feMergeNode in='movedBlur'/>
+                   <feMergeNode in='SourceGraphic'/>
                </feMerge>
           </filter></defs>""")
             def_node = p.childNodes[0]
@@ -547,14 +547,14 @@ class GraffleParser(object):
         if "CrowBall" in self.required_defs:
             p = xml.dom.minidom.parseString("""
             <defs><marker
-            refX="0"
-            refY="0"
-            orient="auto"
-            id="mCrowBall"
-            style="overflow:visible">
-            <path d="M 0.0,2.5 L 7.5,0.0 L 0.0,-2.5" 
-             style="stroke:#000;stroke-width:1.0pt;marker-start:none;fill:none;" />
-            <circle cx="10" cy="0" r="2.5" style="stroke-width:1pt; stroke: #000; fill:none;"/>
+            refX='0'
+            refY='0'
+            orient='auto'
+            id='mCrowBall'
+            style='overflow:visible'>
+            <path d='M 0.0,2.5 L 7.5,0.0 L 0.0,-2.5' 
+             style='stroke:#000;stroke-width:1.0pt;marker-start:none;fill:none;' />
+            <circle cx='10' cy='0' r='2.5' style='stroke-width:1pt; stroke: #000; fill:none;'/>
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -563,13 +563,13 @@ class GraffleParser(object):
         if "Bar" in self.required_defs:
             p = xml.dom.minidom.parseString("""
             <defs><marker
-            refX="0"
-            refY="0"
-            orient="auto"
-            id="mBar"
-            style="overflow:visible">
-            <path d="M -7.5,-2.5 L -7.5,2.5" 
-             style="stroke:#000;stroke-width:1.0pt;marker-start:none;fill:none;" />
+            refX='0'
+            refY='0'
+            orient='auto'
+            id='mBar'
+            style='overflow:visible'>
+            <path d='M -7.5,-2.5 L -7.5,2.5' 
+             style='stroke:#000;stroke-width:1.0pt;marker-start:none;fill:none;' />
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:

@@ -72,7 +72,7 @@ def extractRTFString(s):
             style.appendScope()
         elif c == "}":
             if std_string != "":
-                yield {"string":std_string, "style":str(style)}
+                result_lines.append({"string":std_string, "style":style.currentStyle()})
                 std_string = ""
             style.popScope()
             bracket_depth -=1
@@ -89,8 +89,7 @@ def extractRTFString(s):
             elif c == "\n":
                 instruction = False
                 if inst_code == "":
-                    # new line so yield
-                    yield {"string":std_string, "style":str(style)}
+                    result_lines.append({"string":std_string, "style":style.currentStyle()})
                     std_string = ""
                 else:
                     i = do_instruction(inst_code, i)
@@ -103,7 +102,7 @@ def extractRTFString(s):
                     # those characters are escaped
                     std_string += c
     style.popScope()
-
+    return result_lines
 
 class FontTable(object):
     def __init__(self):

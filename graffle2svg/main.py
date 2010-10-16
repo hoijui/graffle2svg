@@ -699,8 +699,10 @@ class GraffleParser(object):
         '''tspan_node.setAttribute("baseline-shift","-50%")'''
         y_pos = float(opts.get("y",0)) + \
                 opts.get("line_height",12) * (opts.get("y_offset",0)+0.5)
-        '''if opts.get("style") is not None:
-            tspan_node.setAttribute("style",str(opts["style"]))'''
+        if (opts.get("style") is not None) and len(opts.get("style"))>0:
+            thestyle = opts.get("style")
+            for (k,v) in thestyle.items():
+                tspan_node.setAttribute(k,v)
         tspan_node.setAttribute("y",str(y_pos))
         actual_string = self.svg_dom.createTextNode(opts.get("text"," "))
         tspan_node.appendChild(actual_string)

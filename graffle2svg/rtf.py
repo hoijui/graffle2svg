@@ -1,4 +1,4 @@
-
+import re
 from styles import CascadingStyles
 
 def isint(i):
@@ -15,13 +15,12 @@ def extractRTFString(s):
     inst_code = ""
 
     ftable = FontTable()
-
+    colortable = ColorTable()
     # The string being generated:
     std_string = ""
     style = CascadingStyles()
     # Want to set these as defaults even if not specified
     style.appendScope()
-    style["fill"]="#000000"
     """TODO: 
      extract styling 
      
@@ -36,7 +35,7 @@ def extractRTFString(s):
 
     def do_instruction(inst_code, i):
         if inst_code == "b":
-            style["font-weght"] = "bold"
+            style["font-weight"] = "bold"
         if inst_code == "ql":
             style["text-align"] = "left"
         elif inst_code == "qr":
@@ -47,6 +46,8 @@ def extractRTFString(s):
             style["text-align"] = "center"
         elif inst_code == "fonttbl":
             i = ftable.parseTable(s,i)
+        elif inst_code == "colortbl":
+            i = colortable.parseTable(s, i)
         elif inst_code[0]=="f" and inst_code[1:].isdigit():
             # Font looked up in font table
             font = ftable.fonts.get(int(inst_code[1:]),{})
@@ -57,11 +58,12 @@ def extractRTFString(s):
             # font size - RTF specifies half pt sizes
             style["font-size"] = "%.1fpt"%(float(inst_code[2:])/2.)
         elif inst_code[:2]=="cf" and isint(inst_code[2:]):
-            # font colour is enytry int(inst_code[2:]) in the colour table :-(
-            # font is chosen from font table using fN (N\in\int)
-            pass
+            # font colour is enytry int(inst_code[2:]) in the colour table
+            style["fill"] = "#" + colortable[int(inst_code[2:])]
+            style["stroke"] = "#" + colortable[int(inst_code[2:])]
         return i
     i = -1
+    result_lines =[]
     while i < len(s)-1:
         i += 1
         c = s[i]
@@ -92,7 +94,7 @@ def extractRTFString(s):
                     std_string = ""
                 else:
                     i = do_instruction(inst_code, i)
-            elif c != "\\":
+            elif not c  in "\\;":
                 inst_code += c
 
         else:
@@ -175,3 +177,24 @@ class FontTable(object):
             i += 1
 
         return i-1
+
+class ColorTable(object):
+    """ Create a table of colors from a RTF definition in the form of {\colortbl;\red255\green255\blue255;\red75\green75\blue75;}"""
+    def __init__(self):
+        self.color = []
+    
+    def parseTable(self,defn, startidx ):
+        endidx = defn.find("}", startidx)
+        primitive_reg = re.compile(r"(\D+)(\d+)")
+        for colordef in defn[startidx-1:endidx-1].split(";"):
+            color = {'red':0, 'green':0, 'blue':0}
+            for primitivedef in colordef.split('\\'):
+                 primitive_match = primitive_reg.match(primitivedef)
+                 if primitive_match is not None:
+                    primitive, value = primitive_match.groups()
+                    color[primitive] = int(value)
+            self.color.append("%02x"%color['red'] + "%02x"%color['green'] + "%02x"%color['blue'])
+        return endidx-1 
+
+    def __getitem__(self, key):
+        return self.color[key]

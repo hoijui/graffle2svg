@@ -2,10 +2,6 @@
 
 from unittest import makeSuite, TestCase, TestSuite
 
-class TestMe(TestCase):
-    def test_ok(self):
-        pass
-
 def get_tests():
     import testCascadingStyles, testRTF, testGeom, testMain
     TS = TestSuite()

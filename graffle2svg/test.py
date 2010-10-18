@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from tests import get_tests
 import unittest
 

@@ -31,13 +31,51 @@ def parseCoords(s):
     return [float(a) for a in s[1:-1].split(",")]
 
 class GraffleParser(object):
-    g_dom = None
-    svg_dom = None
-    svg_current_layer = None
-    svg_current_font  = ""
-    svg_def = None
     
     def __init__(self):
+        self.doc_dict = None
+        self.g_dom = None
+        self.svg_dom = None
+        self.svg_current_layer = None
+        self.svg_current_font  = ""
+        self.svg_def = None
+        
+    @property
+    def svg(self):
+        """Return the svg document"""
+        return self.svg_dom.toprettyxml()
+        
+    def walkGraffle(self, xmlstr, **kwargs):
+        """Walk over the file"""
+        self.g_dom = xml.dom.minidom.parseString(xmlstr)
+        
+        self.walkGraffleDoc(self.g_dom, **kwargs)
+        
+        
+    def walkGraffleDoc(self, parent):
+        # want to pass this around like a continuation
+        cont = nodeListGen(parent.childNodes)
+        i = 0
+        for e in cont:
+            if e.nodeType == e.DOCUMENT_TYPE_NODE:
+                pass
+            localname = e.localName
+            
+            if localname == "plist":
+                # Apple's main container
+                self.walkGraffleDoc(e)
+                
+            if localname == "dict":
+                self.doc_dict = self.ReturnGraffleDict(e)
+
+        if self.doc_dict is not None:
+            # Extract file information
+            self.fileinfo = fileinfo.FileInfo(self.doc_dict)
+            # Graffle lists it's image references separately
+            self.imagelist = self.doc_dict.get("ImageList",[])
+                
+                
+    def extractPage(self, page=0):
         self.svg_dom = xml.dom.minidom.Document()
         self.svg_dom.doctype = ""
         svg_tag = self.svg_dom.createElement("svg")
@@ -50,7 +88,7 @@ class GraffleParser(object):
         
         # set of required macros
         self.required_defs = set()
-        
+
         self.style = CascadingStyles()
         self.style.appendScope()
         self.style["fill"]="#fff"
@@ -60,53 +98,11 @@ class GraffleParser(object):
         graphic_tag.setAttribute("style",str(self.style))
         svg_tag.appendChild(graphic_tag)
         self.svg_current_layer = graphic_tag
-                
-        
-    @property
-    def svg(self):
-        """Return the svg document"""
-        return self.svg_dom.toprettyxml()
-        
-    def walkGraffle(self, xmlstr, **kwargs):
-        """Walk over the file"""
-        self.g_dom = xml.dom.minidom.parseString(xmlstr)
-        
-        self.walkGraffleDoc(self.g_dom, **kwargs)
-        self.svg_add_requirements()
-        
-        
-    def walkGraffleDoc(self, parent, page = 0):
-        # want to pass this around like a continuation
-        cont = nodeListGen(parent.childNodes)
-        i = 0
-        mydict = None
-        for e in cont:
-            if e.nodeType == e.DOCUMENT_TYPE_NODE:
-                pass
-            localname = e.localName
-            
-            if localname == "plist":
-                # Apple's main container
-                self.walkGraffleDoc(e,page)
-                
-            if localname == "dict":
-                mydict = self.ReturnGraffleDict(e)
+        if self.doc_dict.get("Sheets") is not None:
+            mydict = self.doc_dict["Sheets"][page]
+        else:
+            mydict = self.doc_dict
 
-        if mydict is not None:
-            # Extract file information
-            self.fileinfo = fileinfo.FileInfo(mydict)
-            # Graffle lists it's image references separately
-            self.imagelist = mydict.get("ImageList",[])
-            # Sometimes have multiple sheets
-            if mydict.get("Sheets") is not None:
-                self.extractPage(mydict["Sheets"][page])
-            else:
-                self.extractPage(mydict)
-                
-                
-    def extractPage(self, grafflenodeasdict):
-        mydict = grafflenodeasdict
-        
         if self.fileinfo.fmt_version >= 6:
             # Graffle version 6 has a background graphic
             background = mydict["BackgroundGraphic"]
@@ -144,6 +140,7 @@ class GraffleParser(object):
         
         graphics = reversed(mydict["GraphicsList"])
         self.svgItterateGraffleGraphics(graphics)
+        self.svg_add_requirements()
         
     def ReturnGraffleNode(self, parent):
         """Return a python representation of the 
@@ -448,7 +445,7 @@ class GraffleParser(object):
                     self.required_defs.add("Bar")                    
                 elif headarrow == "0":
                     self.style["marker-end"] = "none"
-                    
+
             if stroke.get("TailArrow") is not None:
                 tailarrow = stroke["TailArrow"]
                 if tailarrow == "FilledArrow":
@@ -460,10 +457,11 @@ class GraffleParser(object):
                     
                 elif tailarrow == "0":
                     self.style["marker-start"]="none"
+
             if stroke.get("Width") is not None:
                 width = stroke["Width"]
                 self.style["stroke-width"]="%fpx"%float(width)
-            
+
         if style.get("shadow",{}).get("Draws","NO") != "NO":
             # for some reason graffle has a shadow by default
             self.required_defs.add("DropShadow")

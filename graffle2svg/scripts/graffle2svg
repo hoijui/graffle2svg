@@ -92,11 +92,12 @@ if __name__ == "__main__":
 
         
     gp = GraffleParser()
+    gp.walkGraffle(graffle_data)
     try:        
         page = int(options.page)
-        gp.walkGraffle(graffle_data, page=page)
+        gp.extractPage(page=page)
     except:
-        gp.walkGraffle(graffle_data)
+        gp.extractPage()
     
     
     if options.display == True:

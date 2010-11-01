@@ -462,6 +462,13 @@ class GraffleParser(object):
                 width = stroke["Width"]
                 self.style["stroke-width"]="%fpx"%float(width)
 
+            if stroke.get("Pattern") is not None:
+                pattern = stroke["Pattern"]
+                if pattern == 1:
+                    self.style["stroke-dasharray"]="3 3"
+                elif pattern == 2:
+                    self.style["stroke-dasharray"]="5 5"
+
         if style.get("shadow",{}).get("Draws","NO") != "NO":
             # for some reason graffle has a shadow by default
             self.required_defs.add("DropShadow")

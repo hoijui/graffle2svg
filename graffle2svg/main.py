@@ -305,10 +305,13 @@ class GraffleParser(object):
                 self.svgSetGraffleFont(graphics.get("FontInfo"))
                 
                 x, y, width, height = coords
-                x += graphics['Text'].get('Pad',0)
-                y += graphics['Text'].get('VerticalPad',0)
+                dx = graphics['Text'].get('Pad',0)
+                dy = graphics['Text'].get('VerticalPad',0)
                 self.svg_addText(self.svg_current_layer, rtftext = graphics.get("Text").get("Text",""),
-                                 x = x+width/2, y = y+height/2, width = width, height = height, fontinfo = graphics.get("FontInfo"))
+                                 x = x+dx, y = y+dy, width = width-2*dx, height = height-2*dy, fontinfo = graphics.get("FontInfo"))
+
+
+                                 
             self.style.popScope()
             
             
@@ -478,6 +481,8 @@ class GraffleParser(object):
             except:
                 font_col = "000000"
         fontstuffs.append("fill:#%s"%font_col)
+        fontstuffs.append("stroke:#%s"%font_col)
+        fontstuffs.append("stroke-width:0.1pt")
             
         fontfam = font.get("Font")
         if fontfam is not None:
@@ -671,12 +676,10 @@ class GraffleParser(object):
         text_tag.setAttribute("id",opts.get("id",""))
         text_tag.setAttribute("x",str(opts.get("x","0")))
         text_tag.setAttribute("y",str(opts.get("y","0")))
-        text_tag.setAttribute("text-anchor","middle")
 #        text_tag.setAttribute("dominant-baseline","mathematical")
         text_tag.setAttribute("style", self.svg_current_font)
         node.appendChild(text_tag)
         
-        # TODO: lines need to be moved down by the correct size
         
         # Generator
         lines = extractRTFString(opts["rtftext"])
@@ -685,25 +688,33 @@ class GraffleParser(object):
             font_height = int(font_info.get("Size"))
         else:
             font_height = 12
-        i = 0
+        total_height = 0.0
         for span in lines:
+            total_height += float(span["style"].get("font-size","%.1fpt"%font_height)[:-2])+1
+        y_diff = float(opts.get("y", "12.0")) + opts.get("height",0)/2 -total_height/2
+        for span in lines:
+            y_diff+= float(span["style"].get("font-size","%.1fpt"%font_height)[:-2])+1
             self.svg_addLine(text_tag,text = span["string"], style = span["style"],\
-                    y_offset = i, line_height =font_height, **opts)
-            i+=1
+                    y_pos=y_diff, line_height =font_height, **opts)
         
     def svg_addLine(self,textnode, **opts):
         """Add a line of text"""
         tspan_node = self.svg_dom.createElement("tspan")
         tspan_node.setAttribute("id",opts.get("id",""))
-        tspan_node.setAttribute("x",str(opts.get("x","0")))
-        '''tspan_node.setAttribute("baseline-shift","-50%")'''
-        y_pos = float(opts.get("y",0)) + \
-                opts.get("line_height",12) * (opts.get("y_offset",0)+0.5)
+        align = opts.get("style", {"text-align":"left"}).get("text-align", "left")
+        x = opts.get("x",0)
+        if align=="center":
+            tspan_node.setAttribute("text-anchor","middle")
+            x+=opts.get("width", 0)/2
+        elif align == "right":
+            x+=opts.get("width", 0)
+        tspan_node.setAttribute("x",str(x))
+        y_pos = float(opts.get("y_pos",0))
+        tspan_node.setAttribute("y",str(y_pos))
         if (opts.get("style") is not None) and len(opts.get("style"))>0:
             thestyle = opts.get("style")
             for (k,v) in thestyle.items():
                 tspan_node.setAttribute(k,v)
-        tspan_node.setAttribute("y",str(y_pos))
         actual_string = self.svg_dom.createTextNode(opts.get("text"," "))
         tspan_node.appendChild(actual_string)
         textnode.appendChild(tspan_node)

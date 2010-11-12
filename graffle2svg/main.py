@@ -497,7 +497,7 @@ class GraffleParser(object):
                 font_col = "000000"
         fontstuffs.append("fill:#%s"%font_col)
         fontstuffs.append("stroke:#%s"%font_col)
-        fontstuffs.append("stroke-width:0.1pt")
+        fontstuffs.append("stroke-width:0.1px")
             
         fontfam = font.get("Font")
         if fontfam is not None:
@@ -509,7 +509,7 @@ class GraffleParser(object):
             
         size = font.get("Size")
         if size is not None:
-            fontstuffs.append("font-size:%dpt"%int(size) )
+            fontstuffs.append("font-size:%dpx"%int(size) )
         
         self.svg_current_font = ";".join(fontstuffs)
         
@@ -527,7 +527,7 @@ class GraffleParser(object):
               <path
                  id='path3666'
                  d='M -10,0.0 L -10.0,-2.0 L 0.0,0.0 L -10.0,2.0 z '
-                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;' />
+                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0px;marker-start:none;' />
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -544,7 +544,7 @@ class GraffleParser(object):
               <path
                  id='path3663'
                  d='M 10,0.0 L 10.0,-2.0 L 0.0,0.0 L 10.0,2.0 z'
-                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none'/>
+                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0px;marker-start:none'/>
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -573,8 +573,8 @@ class GraffleParser(object):
             id='mCrowBall'
             style='overflow:visible'>
             <path d='M 0.0,2.5 L 7.5,0.0 L 0.0,-2.5' 
-             style='stroke:#000;stroke-width:1.0pt;marker-start:none;fill:none;' />
-            <circle cx='10' cy='0' r='2.5' style='stroke-width:1pt; stroke: #000; fill:none;'/>
+             style='stroke:#000;stroke-width:1.0px;marker-start:none;fill:none;' />
+            <circle cx='10' cy='0' r='2.5' style='stroke-width:1px; stroke: #000; fill:none;'/>
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -589,7 +589,7 @@ class GraffleParser(object):
             id='mBar'
             style='overflow:visible'>
             <path d='M -7.5,-2.5 L -7.5,2.5' 
-             style='stroke:#000;stroke-width:1.0pt;marker-start:none;fill:none;' />
+             style='stroke:#000;stroke-width:1.0px;marker-start:none;fill:none;' />
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
@@ -705,12 +705,12 @@ class GraffleParser(object):
             font_height = 12
         total_height = 0.0
         for span in lines:
-            total_height += float(span["style"].get("font-size","%.1fpt"%font_height)[:-2])+1
+            total_height += float(span["style"].get("font-size","%.1fpx"%font_height)[:-2])
         y_diff = float(opts.get("y", "12.0")) + opts.get("height",0)/2 -total_height/2
         id=opts["id"]
         linenb = 0
         for span in lines:
-            y_diff+= float(span["style"].get("font-size","%.1fpt"%font_height)[:-2])+1
+            y_diff+= float(span["style"].get("font-size","%.1fpx"%font_height)[:-2])
             linenb+=1
             opts["id"]=str(id)+"_line"+str(linenb)
             self.svg_addLine(text_tag,text = span["string"], style = span["style"],\

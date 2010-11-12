@@ -14,7 +14,7 @@ class TestRTF(TestCase):
         ''' test that font size is correctly applied on spans'''
         lines = extractRTFString(r"{\rtf\ansi\fs10\b testing}")
         self.assertEqual(len(lines), 1)
-        self.assertEqual(lines[0]['style'],  {"font-size":"5.0pt","font-weight":"bold"})
+        self.assertEqual(lines[0]['style'],  {"font-size":"5.0px","font-weight":"bold"})
         
     def testfont(self):
         lines = extractRTFString(r"""{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540

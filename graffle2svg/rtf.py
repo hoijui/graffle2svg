@@ -56,7 +56,7 @@ def extractRTFString(s):
                     style[k] = v
         elif inst_code[:2]=="fs" and isint(inst_code[2:]):
             # font size - RTF specifies half pt sizes
-            style["font-size"] = "%.1fpt"%(float(inst_code[2:])/2.)
+            style["font-size"] = "%.1fpx"%(float(inst_code[2:])/2.0)
         elif inst_code[:2]=="cf" and isint(inst_code[2:]):
             # font colour is enytry int(inst_code[2:]) in the colour table
             style["fill"] = "#" + colortable[int(inst_code[2:])]

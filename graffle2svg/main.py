@@ -155,7 +155,7 @@ class GraffleParser(object):
             return True
         elif parent.localName == "false":
             return False
-        elif parent.localName in ["string","real","int"]:
+        elif parent.localName in ["string","real","integer"]:
             return self.ReturnGraffleNode(parent.firstChild)
         return parent.nodeType
         

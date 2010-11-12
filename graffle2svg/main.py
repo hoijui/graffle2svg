@@ -44,6 +44,15 @@ class GraffleParser(object):
     def svg(self):
         """Return the svg document"""
         return self.svg_dom.toprettyxml()
+
+    def walkGraffleFile(self,filename):
+        import plistlib
+        self.doc_dict = plistlib.readPlist(filename)
+        if self.doc_dict is not None:
+            # Extract file information
+            self.fileinfo = fileinfo.FileInfo(self.doc_dict)
+            # Graffle lists it's image references separately
+            self.imagelist = self.doc_dict.get("ImageList",[])
         
     def walkGraffle(self, xmlstr, **kwargs):
         """Walk over the file"""
@@ -302,8 +311,8 @@ class GraffleParser(object):
                 self.svgSetGraffleFont(graphics.get("FontInfo"))
                 
                 x, y, width, height = coords
-                dx = graphics['Text'].get('Pad',0)
-                dy = graphics['Text'].get('VerticalPad',0)
+                dx = float(graphics['Text'].get('Pad',0))
+                dy = float(graphics['Text'].get('VerticalPad',0))
                 self.svg_addText(self.svg_current_layer, rtftext = graphics.get("Text").get("Text",""),
                                  x = x+dx, y = y+dy, width = width-2*dx, height = height-2*dy, fontinfo = graphics.get("FontInfo"))
 

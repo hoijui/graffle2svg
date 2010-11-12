@@ -449,8 +449,8 @@ class GraffleParser(object):
             if stroke.get("TailArrow") is not None:
                 tailarrow = stroke["TailArrow"]
                 if tailarrow == "FilledArrow":
-                    self.style["marker-start"]="url(#Arrow1Lend)"
-                    self.required_defs.add("Arrow1Lend")
+                    self.style["marker-start"]="url(#Arrow1Lstart)"
+                    self.required_defs.add("Arrow1Lstart")
                 elif tailarrow == "CrowBall":
                     self.style["marker-start"]  = "url(#mCrowBall)"
                     self.required_defs.add("CrowBall")

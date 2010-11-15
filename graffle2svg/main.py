@@ -43,7 +43,7 @@ class GraffleParser(object):
     @property
     def svg(self):
         """Return the svg document"""
-        return self.svg_dom.toprettyxml()
+        return self.svg_dom.toprettyxml(encoding='utf-8')
 
     def walkGraffleFile(self,filename):
         import plistlib

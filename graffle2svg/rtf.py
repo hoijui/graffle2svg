@@ -1,6 +1,6 @@
 import re
 from styles import CascadingStyles
-
+std_string = ""
 def isint(i):
     try:
         int(i)
@@ -33,7 +33,7 @@ def extractRTFString(s):
 \f0\fs28 \cf0 Next ads are represented in a book-ended carousel on end screen}
     """
 
-    def do_instruction(inst_code, i):
+    def do_instruction(inst_code, i, std_string):
         if inst_code == "b":
             style["font-weight"] = "bold"
         if inst_code == "ql":
@@ -61,7 +61,9 @@ def extractRTFString(s):
             # font colour is enytry int(inst_code[2:]) in the colour table
             style["fill"] = "#" + colortable[int(inst_code[2:])]
             style["stroke"] = "#" + colortable[int(inst_code[2:])]
-        return i
+        elif inst_code[0] == "u" and isint(inst_code[1:]):
+            std_string +=unichr(int(inst_code[1:]))
+        return i,  std_string
     i = -1
     result_lines =[]
     while i < len(s)-1:
@@ -71,6 +73,10 @@ def extractRTFString(s):
             bracket_depth +=1
             style.appendScope()
         elif c == "}":
+            if len(inst_code) > 0:
+                i,  std_string = do_instruction(inst_code, i,  std_string)
+                instruction=False
+                inst_code=""
             if std_string != "":
                 result_lines.append({"string":std_string, "style":style.currentStyle()})
                 std_string = ""
@@ -78,21 +84,23 @@ def extractRTFString(s):
             bracket_depth -=1
         elif c == "\\":
             if len(inst_code) > 0:
-                i = do_instruction(inst_code, i)
+                i, std_string = do_instruction(inst_code, i,  std_string)
             instruction = True
             inst_code = ""
         
         if instruction:
             if c == " ":
                 instruction = False
-                i = do_instruction(inst_code, i)
+                i, std_string = do_instruction(inst_code, i,  std_string)
+                inst_code=""
             elif c == "\n":
                 instruction = False
                 if inst_code == "":
                     result_lines.append({"string":std_string, "style":style.currentStyle()})
                     std_string = ""
                 else:
-                    i = do_instruction(inst_code, i)
+                    i, std_string = do_instruction(inst_code, i,  std_string)
+                    inst_code=""
             elif not c  in "\\;":
                 inst_code += c
 

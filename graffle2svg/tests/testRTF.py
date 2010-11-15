@@ -34,6 +34,16 @@ ree of charge, to any person ob\
 }""")
         self.assertEqual(len(lines),8 )
 
+    def testsimpleunicode(self):
+        lines = extractRTFString(r""""{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+\fs24 \uc0\u916}""")
+        self.assertEqual(lines[0]['string'],u'\u0394')
+
+def testcomplexunicode(self):
+        lines = extractRTFString(r""""{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+\fs24 \uc0\u916
+\fs10 2}""")
+        self.assertEqual(lines[0]['string'],u'\u03942')
 
 class TestColorTable(TestCase):
     def testsimpleColorTable(self):

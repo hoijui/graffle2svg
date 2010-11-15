@@ -272,7 +272,7 @@ class GraffleParser(object):
                         """
                         
                     
-                self.svg_addPath(self.svg_current_layer, pts)
+                self.svg_addPath(self.svg_current_layer, pts,id=str(graphics["ID"]))
                 
             elif cls == "TableGroup":
                 # In Progress
@@ -314,7 +314,7 @@ class GraffleParser(object):
                 dx = float(graphics['Text'].get('Pad',0))
                 dy = float(graphics['Text'].get('VerticalPad',0))
                 self.svg_addText(self.svg_current_layer, rtftext = graphics.get("Text").get("Text",""),
-                                 x = x+dx, y = y+dy, width = width-2*dx, height = height-2*dy, fontinfo = graphics.get("FontInfo"))
+                                 x = x+dx, y = y+dy, width = width-2*dx, height = height-2*dy, fontinfo = graphics.get("FontInfo"),id=graphics["ID"])
 
 
                                  
@@ -331,6 +331,7 @@ class GraffleParser(object):
             extra_opts["VFlip"] = True
         if graphic.get("Rotation") is not None:
             extra_opts["Rotation"] = float(graphic["Rotation"])
+        extra_opts["id"] = str(graphic["ID"])
             
         if shape == 'Rectangle':
             coords = self.extractBoundCOordinates(graphic['Bounds'])
@@ -687,7 +688,7 @@ class GraffleParser(object):
     def svg_addText(self,node,**opts):
         """Add an svg text element"""
         text_tag = self.svg_dom.createElement("text")
-        text_tag.setAttribute("id",opts.get("id",""))
+        text_tag.setAttribute("id",str(opts.get("id",""))+"_text")
         text_tag.setAttribute("x",str(opts.get("x","0")))
         text_tag.setAttribute("y",str(opts.get("y","0")))
 #        text_tag.setAttribute("dominant-baseline","mathematical")
@@ -706,8 +707,12 @@ class GraffleParser(object):
         for span in lines:
             total_height += float(span["style"].get("font-size","%.1fpt"%font_height)[:-2])+1
         y_diff = float(opts.get("y", "12.0")) + opts.get("height",0)/2 -total_height/2
+        id=opts["id"]
+        linenb = 0
         for span in lines:
             y_diff+= float(span["style"].get("font-size","%.1fpt"%font_height)[:-2])+1
+            linenb+=1
+            opts["id"]=str(id)+"_line"+str(linenb)
             self.svg_addLine(text_tag,text = span["string"], style = span["style"],\
                     y_pos=y_diff, line_height =font_height, **opts)
         

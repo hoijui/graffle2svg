@@ -66,9 +66,46 @@ class TestRotate(TestGeom):
         rotated =geom.rotate_points(pts, 180.000001)
         self.assertFigureAlmostEqual(rotated,[[1., 1.], [-1., 1.]])
 
-      
+class TestBoundingBox(TestGeom):
+    
+    def testBbInside(self):
+        ''' test that the function returns False when all points are inside bounding box'''
+        pts=((-1, -1), (1., 1.))
+        bb=((-2, -3), (3, 4))
+        self.assertFalse(geom.out_of_boundingbox(pts, bb))
+        
+    def testBbMinX(self):
+        '''Test that the function returns True if one point is on the left of bounding box'''
+        pts=((-1, -1), (1., 1.))
+        bb=((0, -3), (3, 4))
+        self.assertTrue(geom.out_of_boundingbox(pts, bb))
+
+    def testBbMaxX(self):
+        '''Test that the function returns True if one point is on the right bounding box'''
+        pts=((-1, -1), (1., 1.))
+        bb=((-2, -3), (0, 4))
+        self.assertTrue(geom.out_of_boundingbox(pts, bb))
+
+    def testBbMinY(self):
+        '''Test that the function returns True if one point is below the bounding box'''
+        pts=((-1, -1), (1., 1.))
+        bb=((-2, 0), (3, 4))
+        self.assertTrue(geom.out_of_boundingbox(pts, bb))
+
+    def testBbMaxY(self):
+        '''Test that the function returns True if one point is above bounding box'''
+        pts=((-1, -1), (1., 1.))
+        bb=((-2, -3), (3, 0))
+        self.assertTrue(geom.out_of_boundingbox(pts, bb))
+    
+    def testBbNoneReturnsFalse(self):
+        ''' Test that providing a None boundingbox returns False'''
+        pts=((-1, -1), (1., 1.))
+        self.assertFalse(geom.out_of_boundingbox(pts, None))
+        
 def get_tests():
     TS = TestSuite()
     TS.addTest(makeSuite(TestCentre))
     TS.addTest(makeSuite(TestRotate))
+    TS.addTest(makeSuite(TestBoundingBox))
     return TS

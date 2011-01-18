@@ -74,3 +74,13 @@ def rotate_points(pts, angle=0, centre=None):
         newy = yc + (sn*relx+cs*rely)
         outpts.append( [newx,newy] )
     return outpts
+
+def out_of_boundingbox(points,  boundingbox):
+    ''' returns True if one of the points is out of selected boundingbox. If boundingbox is None, returns False'''
+    if not boundingbox:
+        return False
+    for point in points:
+        if ((point[0] - boundingbox[0][0]) * (point[0] - boundingbox[1][0])>0) or \
+            ((point[1] - boundingbox[0][1]) * (point[1] - boundingbox[1][1])>0):
+                return True
+    return False

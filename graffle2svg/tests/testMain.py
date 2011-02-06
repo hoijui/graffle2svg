@@ -1,28 +1,30 @@
 
 from unittest import makeSuite, TestCase, TestSuite
-import main
+from main import TargetSvg,  GraffleParser
 import xml.dom.minidom
 
 class TestMkHex(TestCase):
+    def setUp(self):
+        self.gi =TargetSvg()
 
     def testZero(self):
-        self.assertEqual(main.mkHex(0.0),"00")
+        self.assertEqual(self.gi.mkHex(0.0),"00")
 
     def testFull(self):
-        self.assertEqual(main.mkHex(1.0) , "ff")
+        self.assertEqual(self.gi.mkHex(1.0) , "ff")
 
     def testOne(self):
-        self.assertEqual(main.mkHex(1.0/255) , "01")
+        self.assertEqual(self.gi.mkHex(1.0/255) , "01")
 
     def testFifteen(self):
-        self.assertEqual(main.mkHex(15.0/255) , "0f")
+        self.assertEqual(self.gi.mkHex(15.0/255) , "0f")
 
     def test254(self):
-        self.assertEqual(main.mkHex(254.0/255) , "fe")
+        self.assertEqual(self.gi.mkHex(254.0/255) , "fe")
 
 class TestGraffleParser(TestCase):
     def setUp(self):
-        self.gp = main.GraffleParser()
+        self.gp = GraffleParser()
     
     def tearDown(self):
         del self.gp

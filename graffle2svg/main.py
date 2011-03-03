@@ -17,10 +17,6 @@ import geom
 import fileinfo
 
 
-def nodeListGen(nodelist):
-    """We need this so we can pass continuations around"""
-    for e in nodelist:
-        yield e
         
 
 class GraffleParser(object):
@@ -46,8 +42,7 @@ class GraffleParser(object):
         
     def walkGraffleDoc(self, parent):
         # want to pass this around like a continuation
-        cont = nodeListGen(parent.childNodes)
-        i = 0
+        cont = self.nodeListGen(parent.childNodes)
         for e in cont:
             if e.nodeType == e.DOCUMENT_TYPE_NODE:
                 pass
@@ -60,9 +55,11 @@ class GraffleParser(object):
             if localname == "dict":
                 self.doc_dict = self.ReturnGraffleDict(e)
 
-                
-                
-        
+    def nodeListGen(self,nodelist):
+        """We need this so we can pass continuations around"""
+        for e in nodelist:
+            yield e
+
     def ReturnGraffleNode(self, parent):
         """Return a python representation of the 
            node passed"""
@@ -79,7 +76,7 @@ class GraffleParser(object):
         elif parent.localName in ["string","real","integer"]:
             return self.ReturnGraffleNode(parent.firstChild)
         return parent.nodeType
-        
+
     def ReturnGraffleDict(self, parent):
         """Graffle has dicts like
             <dict>
@@ -91,7 +88,7 @@ class GraffleParser(object):
             - pass the <dict> node to this method
         """
         retdict = {}
-        cont = nodeListGen(parent.childNodes)
+        cont = self.nodeListGen(parent.childNodes)
         key, val = None, None
         for e in cont:
             if e.nodeType == e.TEXT_NODE:
@@ -103,7 +100,7 @@ class GraffleParser(object):
                 val = self.ReturnGraffleNode(e)
                 retdict[key] = val
         return retdict
-        
+
     def ReturnGraffleArray(self, parent):
         """Graffle has arrays like
             <array>
@@ -113,15 +110,15 @@ class GraffleParser(object):
             - pass the <array> node to this method
         """
         retlist = []
-        cont = nodeListGen(parent.childNodes)
+        cont = self.nodeListGen(parent.childNodes)
         for e in cont:
             if e.nodeType == e.TEXT_NODE:
                 continue
             retlist.append(self.ReturnGraffleNode(e))
         return retlist
 
- 
- 
+
+
 class GraffleInterpreter(object):
     __slots__=['doc_dict', 'target', 'fileinfo', 'imagelist']
     def _init_(self):
@@ -134,7 +131,7 @@ class GraffleInterpreter(object):
         self.target = target
     
     def getdict(self):
-        return doc_dict
+        return self.doc_dict
         
     def setdict(self, doc_dict):
         self.doc_dict = doc_dict
@@ -184,8 +181,6 @@ class GraffleInterpreter(object):
                 # Version 5 has a CanvasColor property instead
                 colour = mydict.get("CanvasColor")
                 if colour is not None:
-                    sty = {}
-                    
                     # We have to guess the document's dimensions from the print size
                     # - these numbers appear to match up with the background size in 
                     #  version 6.
@@ -202,8 +197,7 @@ class GraffleInterpreter(object):
                     x, y   = origin
                     width  = paper_size[0] - Lmargin - Rmargin
                     height = paper_size[1] - Bmargin - Tmargin
-                    self.svg_addRect(self.svg_current_layer,
-                                            x = x,
+                    self.target.addRect(x = x,
                                             y = y,
                                             width = width,
                                             height = height,
@@ -318,7 +312,7 @@ class GraffleInterpreter(object):
             cls = graphics["Class"]
             if cls == "SolidGraphic":
                 # used as background - add a 
-                shallowcopy = {"Shape":"Rectangle"}
+                shallowcopy = dict({"Shape":"Rectangle"})
                 shallowcopy.update(graphics)
                 self.svgAddGraffleShapedGraphic(shallowcopy)
                 
@@ -332,7 +326,7 @@ class GraffleInterpreter(object):
             elif cls == "LineGraphic":
                 pts = self.extractMagnetCoordinates(graphics["Points"])
                 self.target.style["fill"] = "none"
-                if graphics.get("OrthogonalBarAutomatic") == False:
+                if not graphics.get("OrthogonalBarAutomatic"):
                     bar_pos = graphics.get("OrthogonalBarPosition")
                     if bar_pos is not None:
                         # Decide where to place the orthogonal position
@@ -456,7 +450,7 @@ class TargetSvg(object):
             elif fontfam == "Courier":
                 fontfam = "Courier New"
             elif fontfam == "GillSans":
-                fontfam == "Arial Narrow"
+                fontfam = "Arial Narrow"
             fontstuffs.append("font-family: %s"%fontfam)
             
         size = font.get("Size")
@@ -497,7 +491,7 @@ class TargetSvg(object):
             
         ptStrings = [",".join([str(b) for b in a]) for a in mypts]
         line_string = "M %s"%ptStrings[0] + " ".join(" L %s"%a for a in ptStrings[1:] )
-        if opts.get("closepath",False) == True:
+        if opts.get("closepath",False):
             line_string = line_string + " z"
         path_tag = self.svg_dom.createElement("path")
         path_tag.setAttribute("id", opts.get("id",""))
@@ -505,10 +499,10 @@ class TargetSvg(object):
         path_tag.setAttribute("d", line_string)
         self.svg_current_layer.appendChild(path_tag)
         
-    def addHorizontalTriangle(self, bounds, rotation = 0, **opts):
+    def addHorizontalTriangle(self, bounds, **opts):
         """Graffle has the "HorizontalTriangle" Shape"""
         x,y,width,height = [float(a) for a in bounds]
-        self.svg_addPath([[x,y],[x+width,y+height/2], [x,y+height]], \
+        self.addPath([[x,y],[x+width,y+height/2], [x,y+height]], \
                         closepath=True, **opts)
                         
     def addImage(self, bounds, **opts):
@@ -523,16 +517,16 @@ class TargetSvg(object):
         image_tag.setAttribute("style", str(self.style.scopeStyle()))
         self.svg_current_layer.appendChild(image_tag)
         
-    def addRightTriangle(self,  bounds, rotation = 0, **opts):
+    def addRightTriangle(self,  bounds, **opts):
         """Graffle has the "RightTriangle" Shape"""
         x,y,width,height = [float(a) for a in bounds]
-        self.svg_addPath( [[x,y],[x+width,y+height], [x,y+height]], \
+        self.addPath( [[x,y],[x+width,y+height], [x,y+height]], \
                         closepath=True, **opts)
 
-    def addVerticalTriangle(self,  bounds, rotation = 0, **opts):
+    def addVerticalTriangle(self,  bounds, **opts):
         """Graffle has the "RightTriangle" Shape"""
         x,y,width,height = [float(a) for a in bounds]
-        self.svg_addPath( [[x,y],[x+width,y], [x+width/2,y+height]], \
+        self.addPath( [[x,y],[x+width,y], [x+width/2,y+height]], \
                         closepath=True, **opts)
             
     def addRect(self,  **opts):
@@ -587,12 +581,12 @@ class TargetSvg(object):
         for span in lines:
             total_height += float(span["style"].get("font-size","%.1fpx"%font_height)[:-2])
         y_diff = float(opts.get("y", "12.0")) + opts.get("height",0)/2 -total_height/2
-        id=opts["id"]
+        line_id=opts["id"]
         linenb = 0
         for span in lines:
             y_diff+= float(span["style"].get("font-size","%.1fpx"%font_height)[:-2])
             linenb+=1
-            opts["id"]=str(id)+"_line"+str(linenb)
+            opts["id"]=str(line_id)+"_line"+str(linenb)
             self.addLine(text_tag,text = span["string"], style = span["style"],\
                     y_pos=y_diff, line_height =font_height, **opts)
         
@@ -699,10 +693,7 @@ class TargetSvg(object):
             for node in def_node.childNodes:
                 self.svg_def.appendChild(node)
 
-    def setGraffleStyle(self, style):
-        style_string = ""
-        styles_list = []
-        
+    def setGraffleStyle(self, style):        
         if style.get("fill") is not None:
             fill = style.get("fill")
             if fill.get("Draws","") == "NO":

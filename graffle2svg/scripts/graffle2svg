@@ -13,7 +13,7 @@
 
 #THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from graffle2svg.main import GraffleParser
+from graffle2svg.main import *
 
 
 def get_options():
@@ -80,31 +80,34 @@ if __name__ == "__main__":
     import sys, tempfile
     import subprocess, os
     
+    gp = GraffleParser()
+    gi = GraffleInterpreter()
+    svgTarget = TargetSvg()
+    gi.setTarget(svgTarget)
     
     graffle_data = ""
     if optsdict["stdin"]:
         graffle_data = sys.stdin.read()
+        gi.dict = GraffleParser().walkGraffle(graffle_data)
     else:
         import graffle2svg.filepack as filepack
         grafflefilepack = filepack.GraffleFilePack(optsdict["infile"])
-        graffle_data = grafflefilepack.read()
+        gi.dict = GraffleParser().walkGraffleFile(grafflefilepack.fileObject)
         grafflefilepack.close()
 
         
-    gp = GraffleParser()
-    gp.walkGraffle(graffle_data)
     try:        
         page = int(options.page)
-        gp.extractPage(page=page)
+        gi.extractPage(page=page)
     except:
-        gp.extractPage()
+        gi.extractPage()
     
     
     if options.display == True:
         # write a temp file and open that
         outfile, filename = tempfile.mkstemp(suffix=".svg")
         f = open(filename,"w")
-        f.write(gp.svg)
+        f.write(gi.target.svg)
         f.close()
         if os.name == 'mac':
             subprocess.call(('open', filename))
@@ -115,8 +118,8 @@ if __name__ == "__main__":
 
     elif options.stdout == True:
         #print to stdout
-        print gp.svg
+        print gi.target.svg
     else:
         f = open(optsdict["outfile"],"w")
-        f.write(gp.svg)
+        f.write(gi.target.svg)
         f.close()

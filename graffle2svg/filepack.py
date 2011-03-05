@@ -21,7 +21,10 @@ class GraffleFilePack(object):
             self.__file = open(fn,"r")
         elif self.detectGZipXMLFile(fn):
             self.__file = gzip.open(fn, "rb")
-            
+    @property        
+    def fileObject(self):
+        return self.__file
+
     def read(self):
         return self.__file.read()
         

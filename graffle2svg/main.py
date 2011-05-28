@@ -24,7 +24,7 @@ class GraffleParser(object):
     def __init__(self):
         self.doc_dict = None
         self.g_dom = None
-
+ 
 
     def walkGraffleFile(self,filename):
         import plistlib
@@ -120,12 +120,13 @@ class GraffleParser(object):
 
 
 class GraffleInterpreter(object):
-    __slots__=['doc_dict', 'target', 'fileinfo', 'imagelist']
+    __slots__=['doc_dict', 'target', 'fileinfo', 'imagelist', 'bounding_box']
     def __init__(self):
         self.doc_dict = None
         self.fileinfo = None
         self.target = None
         self.imagelist = None
+        self.bounding_box = None
     
     def setTarget(self, target):
         self.target = target
@@ -186,14 +187,11 @@ class GraffleInterpreter(object):
                     #  version 6.
                     origin = self.parseCoords(mydict.get("CanvasOrigin","{0,0}"))
                     print_info = self.fileinfo.printinfo
-                    
                     paper_size = print_info.paper_size
-                            
                     Lmargin = print_info.left_margin
                     Rmargin = print_info.right_margin
                     Tmargin = print_info.top_margin
                     Bmargin = print_info.bottom_margin
-                    
                     x, y   = origin
                     width  = paper_size[0] - Lmargin - Rmargin
                     height = paper_size[1] - Bmargin - Tmargin
@@ -220,9 +218,11 @@ class GraffleInterpreter(object):
         if graphic.get("Rotation") is not None:
             extra_opts["Rotation"] = float(graphic["Rotation"])
         extra_opts["id"] = str(graphic["ID"])
-            
+        
+        coords = self.extractBoundCOordinates(graphic['Bounds'])
+        if geom.out_of_boundingbox(((coords[0], coords[1]),  ((coords[0]+coords[2]),  (coords[1] + coords[3]))), self.bounding_box):
+            return
         if shape == 'Rectangle':
-            coords = self.extractBoundCOordinates(graphic['Bounds'])
             if graphic.get("ImageID") is not None:
                 # TODO: images
                 image_id = graphic["ImageID"]
@@ -249,7 +249,6 @@ class GraffleInterpreter(object):
                                         **extra_opts)
 
         elif shape == "RoundRect":
-            coords = self.extractBoundCOordinates(graphic['Bounds'])
             sty = graphic.get("Style",{})
             stroke = sty.get("stroke",{})
             radius = stroke.get("CornerRadius",None)
@@ -267,34 +266,29 @@ class GraffleInterpreter(object):
                              ry=height/2,
                              **extra_opts)            
         elif shape == "HorizontalTriangle":
-            bounds = self.extractBoundCOordinates(graphic['Bounds'])
             self.target.addHorizontalTriangle(
-                                        bounds = bounds,
+                                        bounds = coords,
                                         **extra_opts \
                                         )
         elif shape == "RightTriangle":
-            bounds = self.extractBoundCOordinates(graphic['Bounds'])
             self.target.addRightTriangle(
-                                        bounds = bounds,
+                                        bounds = coords,
                                         **extra_opts \
                                         )
         elif shape == "VerticalTriangle":
-            bounds = self.extractBoundCOordinates(graphic['Bounds'])
             self.target.addVerticalTriangle(
-                                         bounds = bounds,
+                                         bounds = coords,
                                          **extra_opts \
                                          )
         elif shape == "Circle":
             # Actually can be an ellipse
-            bounds = self.extractBoundCOordinates(graphic["Bounds"])
             self.target.addEllipse(
-                                        bounds = bounds,
+                                        bounds = coords,
                                         **extra_opts \
                                         )
         elif shape == "AdjustableArrow":
-            bounds = self.extractBoundCOordinates(graphic["Bounds"])
             self.target.addAdjustableArrow(
-                                        bounds = bounds,
+                                        bounds = coords,
                                         graphic = graphic,
                                         **extra_opts \
                                         )
@@ -330,30 +324,31 @@ class GraffleInterpreter(object):
                 
             elif cls == "LineGraphic":
                 pts = self.extractMagnetCoordinates(graphics["Points"])
-                self.target.style["fill"] = "none"
-                if not graphics.get("OrthogonalBarAutomatic"):
-                    bar_pos = graphics.get("OrthogonalBarPosition")
-                    if bar_pos is not None:
-                        # Decide where to place the orthogonal position
-                        
-                        bar_pos = float(bar_pos)
-                        """
-                        # This isn't right
-                        out_pts = []
-                        i = 0
-                        while i < len(pts) - 1:
-                            p1 = pts[i]
-                            p2 = pts[i+1]
-                            newpt = [p1[0] + bar_pos, p1[1]]
-                            out_pts.append(p1)
-                            out_pts.append(newpt)
-                            out_pts.append(p2)
-                            i+=2
-                        pts = out_pts
-                        """
-                        
-                    
-                self.target.addPath( pts,id=str(graphics["ID"]))
+                if not geom.out_of_boundingbox(pts,self.bounding_box):
+                    self.target.style["fill"] = "none"
+                    if not graphics.get("OrthogonalBarAutomatic"):
+                        bar_pos = graphics.get("OrthogonalBarPosition")
+                        if bar_pos is not None:
+                            # Decide where to place the orthogonal position
+
+                            bar_pos = float(bar_pos)
+                            """
+                            # This isn't right
+                            out_pts = []
+                            i = 0
+                            while i < len(pts) - 1:
+                                p1 = pts[i]
+                                p2 = pts[i+1]
+                                newpt = [p1[0] + bar_pos, p1[1]]
+                                out_pts.append(p1)
+                                out_pts.append(newpt)
+                                out_pts.append(p2)
+                                i+=2
+                            pts = out_pts
+                            """
+
+
+                    self.target.addPath( pts,id=str(graphics["ID"]))
                 
             elif cls == "TableGroup":
                 # In Progress

@@ -1,6 +1,7 @@
 
 from unittest import makeSuite, TestCase, TestSuite
-from main import TargetSvg,  GraffleParser
+from mock import Mock,  patch
+from main import TargetSvg,  GraffleParser,  GraffleInterpreter
 import xml.dom.minidom
 
 class TestMkHex(TestCase):
@@ -45,8 +46,59 @@ class TestGraffleParser(TestCase):
         self.assertEqual(dict['Shape'], 'RoundRect')
 
 
+class TestGraffleInterpreterBoundingBox(TestCase):
+    def setUp(self):
+        self.gi = GraffleInterpreter()
+        self.MockTarget = Mock()
+        self.MockTarget.style=Mock()
+        self.MockTarget.style.__setitem__=Mock()
+        self.gi.setTarget(self.MockTarget)
+        
+    def tearDown(self):
+        del self.MockTarget
+        del self.gi
+    
+    @patch('geom.out_of_boundingbox')
+    def testShapedGraphicWithCoordinatesOutOfBoundinBoxShouldNotAddToTarget(self, mockBounds):
+        self.gi.bounding_box = ((-1, -1),  (1,  1))
+        mockBounds.return_value = True
+        self.gi.itterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect', 'ID':5}])
+        self.assertFalse(any([ mthd_call[0]=='addRect' for mthd_call in self.MockTarget.method_calls]))
+        
+    @patch('geom.out_of_boundingbox')
+    def testShapedGraphicWithCoordinatesInBoundingBoxShouldAddToTarget(self, mockBounds):
+        self.gi.bounding_box = ((-1, -1),  (1,  1))
+        mockBounds.return_value = False
+        self.gi.itterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect',  'ID':5}])
+        self.assertTrue(any([ mthd_call[0]=='addRect' for mthd_call in self.MockTarget.method_calls]))
+
+    def testShapedGraphicWithNoBoundingBoxShouldAddToTarget(self):
+        self.gi.bounding_box=None
+        self.gi.itterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect',  'ID':5}])
+        self.assertTrue(any([ mthd_call[0]=='addRect' for mthd_call in self.MockTarget.method_calls]))
+
+    @patch('geom.out_of_boundingbox')
+    def testLineGraphicWithCoordinatesOutOfBoundinBoxShouldNotAddToTarget(self, mockBounds):
+        self.gi.bounding_box = ((-1, -1),  (1,  1))
+        mockBounds.return_value = True
+        self.gi.itterateGraffleGraphics([{'Class':'LineGraphic', 'Points':['{0, 0}', '{756, 553}'], 'ID':5}])
+        self.assertFalse(any([ mthd_call[0]=='addPath' for mthd_call in self.MockTarget.method_calls]))
+        
+    @patch('geom.out_of_boundingbox')
+    def testLineGraphicWithCoordinatesInBoundingBoxShouldAddToTarget(self, mockBounds):
+        self.gi.bounding_box = ((-1, -1),  (1,  1))
+        mockBounds.return_value = False
+        self.gi.itterateGraffleGraphics([{'Class':'LineGraphic', 'Points':['{0, 0}', '{756, 553}'], 'ID':5}])
+        self.assertTrue(any([ mthd_call[0]=='addPath' for mthd_call in self.MockTarget.method_calls]))
+
+    def testLineGraphicWithNoBoundingBoxShouldAddToTarget(self):
+        self.gi.itterateGraffleGraphics([{'Class':'LineGraphic', 'Points':['{0, 0}', '{756, 553}'], 'ID':5}])
+        self.assertTrue(any([ mthd_call[0]=='addPath' for mthd_call in self.MockTarget.method_calls]))
+
+
 def get_tests():
     TS = TestSuite()
     TS.addTest(makeSuite(TestMkHex))
     TS.addTest(makeSuite(TestGraffleParser))
+    TS.addTest(makeSuite(TestGraffleInterpreterBoundingBox))
     return TS

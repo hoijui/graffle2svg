@@ -121,7 +121,7 @@ class GraffleParser(object):
 
 class GraffleInterpreter(object):
     __slots__=['doc_dict', 'target', 'fileinfo', 'imagelist']
-    def _init_(self):
+    def __init__(self):
         self.doc_dict = None
         self.fileinfo = None
         self.target = None

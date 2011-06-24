@@ -298,6 +298,11 @@ class GraffleInterpreter(object):
                                         graphic = graphic,
                                         **extra_opts \
                                         )
+        elif shape == "Diamond":
+            bounds = self.extractBoundCOordinates(graphic["Bounds"])
+            self.target.addDiamond(bounds = bounds,
+                                   graphic = graphic,
+                                   **extra_opts)
         else:
             print "Don't know how to display Shape %s"%str(graphic['Shape'])
 
@@ -479,6 +484,13 @@ class TargetSvg(object):
                           [x+width,y+height/2], [x+width-neck,y+height], [x+width-neck,y+height-neck_delta],
                           [x,y+height-neck_delta]],closepath=True,**opts) 
                              
+
+    def addDiamond(self,bounds,graphic,**opts):
+        x, y, width, height = [float(a) for a in bounds]
+        xmiddle = x+width/2
+        ymiddle = y+height/2
+        self.addPath([[x,ymiddle], [xmiddle,y+height], [x+width,ymiddle], [xmiddle,y]],closepath=True,**opts)
+
     def addPath(self, pts, **opts):
         # do geometry mapping here
         mypts = pts

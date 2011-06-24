@@ -1,6 +1,5 @@
 import re
 from styles import CascadingStyles
-std_string = ""
 def isint(i):
     try:
         int(i)
@@ -152,6 +151,8 @@ class FontTable(object):
                 if in_name:
                     tkn_name = tkn_string
                     tkn_string = ""
+                if len(tkn_string)>1 and tkn_string[-1]==";":
+                    tkn_string = tkn_string[:-1]
                 process_string()
                 break
             elif c == "{":

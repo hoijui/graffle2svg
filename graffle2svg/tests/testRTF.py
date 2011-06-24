@@ -33,6 +33,7 @@ Permission is hereby granted, f\
 ree of charge, to any person ob\
 }""")
         self.assertEqual(len(lines),8 )
+        self.assertEqual(lines[0]['style']["font-family"],"Monaco")
 
     def testsimpleunicode(self):
         lines = extractRTFString(r""""{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540

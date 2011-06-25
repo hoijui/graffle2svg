@@ -57,7 +57,14 @@ class TestGraffleInterpreterBoundingBox(TestCase):
     def tearDown(self):
         del self.MockTarget
         del self.gi
-    
+
+    @patch('geom.out_of_boundingbox')
+    def testTextWithCoordinatesOutOfBoundinBoxShouldNotAddToTarget(self, mockBounds):
+        self.gi.bounding_box = ((-1, -1),  (1,  1))
+        mockBounds.return_value = True
+        self.gi.itterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect', 'ID':5, 'Text':{'Text':'test'}}])
+        self.assertFalse(any([ mthd_call[0]=='addText' for mthd_call in self.MockTarget.method_calls]))
+
     @patch('geom.out_of_boundingbox')
     def testShapedGraphicWithCoordinatesOutOfBoundinBoxShouldNotAddToTarget(self, mockBounds):
         self.gi.bounding_box = ((-1, -1),  (1,  1))

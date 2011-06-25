@@ -165,8 +165,8 @@ class GraffleInterpreter(object):
 
         return coords
     
-    def extractPage(self, page=0,  background = True):
- 
+    def extractPage(self, page=0,  background = True, bounding_box=None):
+
         if self.doc_dict.get("Sheets") is not None:
             mydict = self.doc_dict["Sheets"][page]
         else:
@@ -201,7 +201,7 @@ class GraffleInterpreter(object):
                                             height = height,
                                             rx=None,
                                             ry=None)
-        
+        self.bounding_box = bounding_box
         graphics = reversed(mydict["GraphicsList"])
         self.target.reset()
         self.itterateGraffleGraphics(graphics)
@@ -218,10 +218,11 @@ class GraffleInterpreter(object):
         if graphic.get("Rotation") is not None:
             extra_opts["Rotation"] = float(graphic["Rotation"])
         extra_opts["id"] = str(graphic["ID"])
-        
+
         coords = self.extractBoundCOordinates(graphic['Bounds'])
+
         if geom.out_of_boundingbox(((coords[0], coords[1]),  ((coords[0]+coords[2]),  (coords[1] + coords[3]))), self.bounding_box):
-            return
+            return False
         if shape == 'Rectangle':
             if graphic.get("ImageID") is not None:
                 # TODO: images
@@ -299,7 +300,8 @@ class GraffleInterpreter(object):
                                    **extra_opts)
         else:
             print "Don't know how to display Shape %s"%str(graphic['Shape'])
-
+        return True
+    
     def itterateGraffleGraphics(self,GraphicsList):
         """parent should be a list of """
         for graphics in GraphicsList:
@@ -317,35 +319,37 @@ class GraffleInterpreter(object):
                 
             elif cls == "ShapedGraphic":
                 try:
-                    self.svgAddGraffleShapedGraphic(graphics)
+                    if not self.svgAddGraffleShapedGraphic(graphics):
+                        continue
                 except:
                     raise
                     print "could not show shaped graphic"
                 
             elif cls == "LineGraphic":
                 pts = self.extractMagnetCoordinates(graphics["Points"])
-                if not geom.out_of_boundingbox(pts,self.bounding_box):
-                    self.target.style["fill"] = "none"
-                    if not graphics.get("OrthogonalBarAutomatic"):
-                        bar_pos = graphics.get("OrthogonalBarPosition")
-                        if bar_pos is not None:
-                            # Decide where to place the orthogonal position
+                if geom.out_of_boundingbox(pts,self.bounding_box):
+                    continue
+                self.target.style["fill"] = "none"
+                if not graphics.get("OrthogonalBarAutomatic"):
+                    bar_pos = graphics.get("OrthogonalBarPosition")
+                    if bar_pos is not None:
+                        # Decide where to place the orthogonal position
 
-                            bar_pos = float(bar_pos)
-                            """
-                            # This isn't right
-                            out_pts = []
-                            i = 0
-                            while i < len(pts) - 1:
-                                p1 = pts[i]
-                                p2 = pts[i+1]
-                                newpt = [p1[0] + bar_pos, p1[1]]
-                                out_pts.append(p1)
-                                out_pts.append(newpt)
-                                out_pts.append(p2)
-                                i+=2
-                            pts = out_pts
-                            """
+                        bar_pos = float(bar_pos)
+                        """
+                        # This isn't right
+                        out_pts = []
+                        i = 0
+                        while i < len(pts) - 1:
+                            p1 = pts[i]
+                            p2 = pts[i+1]
+                            newpt = [p1[0] + bar_pos, p1[1]]
+                            out_pts.append(p1)
+                            out_pts.append(newpt)
+                            out_pts.append(p2)
+                            i+=2
+                        pts = out_pts
+                        """
 
 
                     self.target.addPath( pts,id=str(graphics["ID"]))
@@ -366,9 +370,11 @@ class GraffleInterpreter(object):
                 
             if graphics.get("Text") is not None:
                 # have to write some text too ...
-                coords = self.extractBoundCOordinates(graphics['Bounds'])
                 self.target.setGraffleFont(graphics.get("FontInfo"))
-                
+                coords = self.extractBoundCOordinates(graphics['Bounds'])
+
+                if geom.out_of_boundingbox(((coords[0], coords[1]),  ((coords[0]+coords[2]),  (coords[1] + coords[3]))), self.bounding_box):
+                    continue
                 x, y, width, height = coords
                 dx = float(graphics['Text'].get('Pad',0))
                 dy = float(graphics['Text'].get('VerticalPad',0))

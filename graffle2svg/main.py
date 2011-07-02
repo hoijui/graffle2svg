@@ -294,8 +294,7 @@ class GraffleInterpreter(object):
                                         **extra_opts \
                                         )
         elif shape == "Diamond":
-            bounds = self.extractBoundCOordinates(graphic["Bounds"])
-            self.target.addDiamond(bounds = bounds,
+            self.target.addDiamond(bounds = coords,
                                    graphic = graphic,
                                    **extra_opts)
         else:
@@ -486,7 +485,7 @@ class TargetSvg(object):
                           [x,y+height-neck_delta]],closepath=True,**opts) 
                              
 
-    def addDiamond(self,bounds,graphic,**opts):
+    def addDiamond(self,bounds,**opts):
         x, y, width, height = [float(a) for a in bounds]
         xmiddle = x+width/2
         ymiddle = y+height/2

@@ -297,8 +297,13 @@ class GraffleInterpreter(object):
             self.target.addDiamond(bounds = coords,
                                    graphic = graphic,
                                    **extra_opts)
+        elif shape == "Cloud":
+            self.target.addCloud(bounds=coords,
+                                 graphic = graphic,
+                                 **extra_opts)
         else:
             print "Don't know how to display Shape %s"%str(graphic['Shape'])
+            
         return True
     
     def itterateGraffleGraphics(self,GraphicsList):
@@ -571,6 +576,19 @@ class TargetSvg(object):
         circle_tag.setAttribute("ry", str(ry))
         self.svg_current_layer.appendChild(circle_tag)
 
+    def addCloud(self,bounds,**opts):
+        """Add a cloud element"""
+        self.required_defs.add("network_cloud")
+        x, y, dx, dy = bounds
+        cloud_tag = self.svg_dom.createElement("g")
+        cloud_tag.setAttribute("id", opts.get("id",""))
+        cloud_tag.setAttribute("style", str(self.style.scopeStyle()))
+        cloud_tag.setAttribute("transform","translate(%f,%f) scale(%f,%f)" % (x,y,float(dx)/500.0,float(dy)/500.0))
+        p = xml.dom.minidom.parseString("<use xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href='#network_cloud' />")
+        def_node = p.childNodes[0]
+        cloud_tag.appendChild(def_node)
+        self.svg_current_layer.appendChild(cloud_tag)
+
     def addText(self,**opts):
         """Add an svg text element"""
         text_tag = self.svg_dom.createElement("text")
@@ -742,6 +760,17 @@ class TargetSvg(object):
             for node in def_node.childNodes:
                 self.svg_def.appendChild(node)
 
+        if "network_cloud" in self.required_defs:
+            ''' cloud shape 500x500 '''
+            p = xml.dom.minidom.parseString("""
+            <defs><g id='network_cloud'>
+            <path d='M 127.5 106.25 C 127.5 106.25 126.25 18.7501 231.25 45 C 336.25 71.25 317.5 115 318.75 115 C 320 115 300 61.25 380 51.25 C 452.5 57.5 486.25 71.25 482.5 117.5 C 478.75 163.75 443.75 175 443.75 175 C 443.75 175 507.5 181.25 490 275 C 462.5 340 462.5 333.75 398.75 341.25 C 370 330 368.75 320 368.75 320 C 368.75 320 421.25 368.75 342.5 400 C 253.75 423.75 242.5 402.5 205 391.25 C 168.75 368.75 176.25 341.25 176.25 341.25 C 176.25 341.25 198.75 387.5 122.5 396.25 C 46.25 405 17.5 387.5 3.75 316.25 C 2.08616e-06 262.5 67.5 257.5 67.5 257.5 C 67.5 257.5 26.25 258.75 15 231.25 C 3.75 203.75 -3.75 167.5 30 118.75 C 92.5 60 135 98.75 127.5 106.25 z '/>
+            </g></defs>""")
+            def_node = p.childNodes[0]
+            for node in def_node.childNodes:
+                self.svg_def.appendChild(node)
+
+            
     def setGraffleStyle(self, style):        
         if style.get("fill") is not None:
             fill = style.get("fill")

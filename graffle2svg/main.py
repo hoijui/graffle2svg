@@ -227,6 +227,9 @@ class GraffleInterpreter(object):
             if graphic.get("ImageID") is not None:
                 # TODO: images
                 image_id = graphic["ImageID"]
+                if len(self.imagelist) <= image_id:
+                    print "Error - image out of range"
+                    return
                 image = self.imagelist[image_id]
                 self.target.addImage(bounds = coords, \
                                   href = image)

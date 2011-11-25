@@ -45,13 +45,17 @@ class TestGraffleParser(TestCase):
         dict = self.gp.ReturnGraffleDict(p.firstChild)
         self.assertEqual(dict['Shape'], 'RoundRect')
 
+class scope(dict):
+    def __init__(self):
+        self.appendScope=Mock()
+        self.popScope=Mock()
+        dict.__init__(self)
 
 class TestGraffleInterpreterBoundingBox(TestCase):
     def setUp(self):
         self.gi = GraffleInterpreter()
         self.MockTarget = Mock()
-        self.MockTarget.style=Mock()
-        self.MockTarget.style.__setitem__=Mock()
+        self.MockTarget.style=scope()
         self.gi.setTarget(self.MockTarget)
         
     def tearDown(self):

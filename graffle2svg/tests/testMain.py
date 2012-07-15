@@ -106,10 +106,35 @@ class TestGraffleInterpreterBoundingBox(TestCase):
         self.gi.itterateGraffleGraphics([{'Class':'LineGraphic', 'Points':['{0, 0}', '{756, 553}'], 'ID':5}])
         self.assertTrue(any([ mthd_call[0]=='addPath' for mthd_call in self.MockTarget.method_calls]))
 
+class TestTargetSvg(TestCase):
+    def setUp(self):
+        self.ts = TargetSvg()
+
+    def tearDown(self):
+        del self.ts
+
+    def testReset(self):
+        self.ts.reset()
+        self.assertFalse(self.ts.style is None)
+        self.assertFalse(self.ts.svg_def is None)
+        self.assertFalse(self.ts.svg_dom is None)
+        self.assertFalse(self.ts.svg_current_layer is None)
+        self.assertFalse(self.ts.required_defs is None)
+
+    def testArrowHeadColor(self):
+        self.ts.setGraffleStyle({'stroke':{'Color':{'r':0.5,'g':0.5,'b':0.5},'HeadArrow':"FilledArrow"}})
+        self.assertEqual(self.ts.style['marker-end'],'url(#Arrow1Lend_808080_1.000000px)')
+        self.assertTrue('Arrow1Lend_808080_1.000000px' in self.ts.required_defs)
+
+    def testArrowTailColor(self):
+        self.ts.setGraffleStyle({'stroke':{'Color':{'r':0.5,'g':0.5,'b':0.5},'TailArrow':"FilledArrow"}})
+        self.assertEqual(self.ts.style['marker-start'],'url(#Arrow1Lstart_808080_1.000000px)')
+        self.assertTrue('Arrow1Lstart_808080_1.000000px' in self.ts.required_defs)
 
 def get_tests():
     TS = TestSuite()
     TS.addTest(makeSuite(TestMkHex))
     TS.addTest(makeSuite(TestGraffleParser))
     TS.addTest(makeSuite(TestGraffleInterpreterBoundingBox))
+    TS.addTest(makeSuite(TestTargetSvg))
     return TS

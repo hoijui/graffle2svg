@@ -419,6 +419,7 @@ class TargetSvg(object):
         self.style.appendScope()
         self.style["fill"]="#fff"
         self.style["stroke"]="#000000"
+        self.style["stroke-width"]="1.000000px"
 
         graphic_tag = self.svg_dom.createElement("g")
         graphic_tag.setAttribute("style",str(self.style))
@@ -646,24 +647,46 @@ class TargetSvg(object):
         textnode.appendChild(tspan_node)
 
     def add_requirements(self):
-        if "Arrow1Lend" in self.required_defs:
-            # TODO
-            p = xml.dom.minidom.parseString("""
-            <defs><marker
-               orient='auto'
-               refY='0.0'
-               refX='0.0'
-               id='Arrow1Lend'
-               style='overflow:visible;'>
-              <path
-                 id='path3666'
-                 d='M -10,0.0 L -10.0,-2.0 L 0.0,0.0 L -10.0,2.0 z '
-                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0px;marker-start:none;' />
-            </marker></defs>""")
-            def_node = p.childNodes[0]
-            for node in def_node.childNodes:
-                self.svg_def.appendChild(node)
-                
+        for required in self.required_defs:
+            if required.startswith("Arrow1Lend"):
+                (shape,  color, width) = required.split( "_")
+                scale=1.0/((float(width[0:-2])-1.0)/20.0+1.0)
+                p = xml.dom.minidom.parseString("""
+                <defs><marker
+                   orient='auto'
+                   refY='0.0'
+                   refX='0.0'
+                   id='%(id)s'
+                   style='overflow:visible;'>
+                  <path
+                     id='path_%(id)s'
+                     d='M -5,0.0 L -5,-2.0 L 0.0,0.0 L -5,2.0 z '
+                     style='fill:#%(color)s;fill-rule:evenodd;stroke:#%(color)s;stroke-width:1.0px;marker-start:none;'
+                     transform='scale(%(scale)f)' />
+                </marker></defs>"""%{"id":required, "color":color,  "scale":scale})
+                def_node = p.childNodes[0]
+                for node in def_node.childNodes:
+                    self.svg_def.appendChild(node)
+            if required.startswith("Arrow1Lstart"):
+                (shape,  color, width) = required.split( "_")
+                scale=1.0/((float(width[0:-2])-1.0)/20.0+1.0)
+                p = xml.dom.minidom.parseString("""
+                <defs><marker
+                   orient='auto'
+                   refY='0.0'
+                   refX='0.0'
+                   id='%(id)s'
+                   style='overflow:visible'>
+                  <path
+                     id='path_%(id)s'
+                     d='M 5,0.0 L 5.0,-2.0 L 0.0,0.0 L 5.0,2.0 z'
+                     style='fill:#%(color)s;fill-rule:evenodd;stroke:#%(color)s;stroke-width:1.0px;marker-start:none'
+                     transform='scale(%(scale)f)'/>
+                </marker></defs>"""%{"id":required, "color":color,  "scale":scale})
+                def_node = p.childNodes[0]
+                for node in def_node.childNodes:
+                    self.svg_def.appendChild(node)
+
         if "Arrow2Lend" in self.required_defs:
             # TODO
             p = xml.dom.minidom.parseString("""
@@ -681,24 +704,7 @@ class TargetSvg(object):
             </marker></defs>""")
             def_node = p.childNodes[0]
             for node in def_node.childNodes:
-                self.svg_def.appendChild(node)
-        
-        if "Arrow1Lstart" in self.required_defs:
-            p = xml.dom.minidom.parseString("""
-            <defs><marker
-               orient='auto'
-               refY='0.0'
-               refX='0.0'
-               id='Arrow1Lstart'
-               style='overflow:visible'>
-              <path
-                 id='path3663'
-                 d='M 10,0.0 L 10.0,-2.0 L 0.0,0.0 L 10.0,2.0 z'
-                 style='fill-rule:evenodd;stroke:#000000;stroke-width:1.0px;marker-start:none'/>
-            </marker></defs>""")
-            def_node = p.childNodes[0]
-            for node in def_node.childNodes:
-                self.svg_def.appendChild(node)
+                self.svg_def.appendChild(node)        
 
         if "Arrow2Lstart" in self.required_defs:
             p = xml.dom.minidom.parseString("""
@@ -796,12 +802,19 @@ class TargetSvg(object):
                 if grap_col is not None:
                     stroke_col = self.extract_colour(grap_col)
                     self.style["stroke"]="#%s"%stroke_col
+
+            if stroke.get("Width") is not None:
+                width = stroke["Width"]
+                self.style["stroke-width"]="%fpx"%float(width)
+
             if stroke.get("HeadArrow") is not None:
                 headarrow = stroke["HeadArrow"]
+                marker_end = "none"
                 if headarrow == "FilledArrow":
-                    self.style["marker-end"]="url(#Arrow1Lend)"
-                    self.required_defs.add("Arrow1Lend")
-                if headarrow == "StickArrow":
+                    marker_end = "Arrow1Lend_" + self.style["stroke"] [1:] + "_" + self.style["stroke-width"]
+                    self.style["marker-end"]="url(#%s)"%marker_end
+                    self.required_defs.add(marker_end)
+                elif headarrow == "StickArrow":
                     self.style["marker-end"]="url(#Arrow2Lend)"
                     self.required_defs.add("Arrow2Lend")
                 elif headarrow == "Bar":
@@ -814,9 +827,10 @@ class TargetSvg(object):
             if stroke.get("TailArrow") is not None:
                 tailarrow = stroke["TailArrow"]
                 if tailarrow == "FilledArrow":
-                    self.style["marker-start"]="url(#Arrow1Lstart)"
-                    self.required_defs.add("Arrow1Lstart")
-                elif headarrow =="StickArrow":
+                    marker_start = "Arrow1Lstart_" + self.style["stroke"] [1:] + "_" + self.style["stroke-width"]
+                    self.style["marker-start"]="url(#%s)"%marker_start
+                    self.required_defs.add(marker_start)
+                elif tailarrow =="StickArrow":
                     self.style["marker-end"]="url(#Arrow2Lstart)"
                     self.required_defs.add("Arrow2Lstart")
                 elif tailarrow == "CrowBall":
@@ -825,10 +839,6 @@ class TargetSvg(object):
                     
                 elif tailarrow == "0":
                     self.style["marker-start"]="none"
-
-            if stroke.get("Width") is not None:
-                width = stroke["Width"]
-                self.style["stroke-width"]="%fpx"%float(width)
 
             if stroke.get("Pattern") is not None:
                 pattern = stroke["Pattern"]

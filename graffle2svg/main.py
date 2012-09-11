@@ -810,8 +810,9 @@ class TargetSvg(object):
             if stroke.get("HeadArrow") is not None:
                 headarrow = stroke["HeadArrow"]
                 marker_end = "none"
+                headscale = stroke.get("HeadScale", 1.0)
                 if headarrow == "FilledArrow":
-                    marker_end = "Arrow1Lend_" + self.style["stroke"] [1:] + "_" + self.style["stroke-width"]
+                    marker_end = "Arrow1Lend_" + self.style["stroke"] [1:] + "_" + "%fpx"%(float(self.style["stroke-width"][0:-2])*headscale)
                     self.style["marker-end"]="url(#%s)"%marker_end
                     self.required_defs.add(marker_end)
                 elif headarrow == "StickArrow":
@@ -830,8 +831,9 @@ class TargetSvg(object):
 
             if stroke.get("TailArrow") is not None:
                 tailarrow = stroke["TailArrow"]
+                tailscale = stroke.get("TailScale",1.0)
                 if tailarrow == "FilledArrow":
-                    marker_start = "Arrow1Lstart_" + self.style["stroke"] [1:] + "_" + self.style["stroke-width"]
+                    marker_start = "Arrow1Lstart_" + self.style["stroke"] [1:] + "_" + "%fpx"%(float(self.style["stroke-width"][0:-2])*tailscale)
                     self.style["marker-start"]="url(#%s)"%marker_start
                     self.required_defs.add(marker_start)
                 elif tailarrow =="StickArrow":

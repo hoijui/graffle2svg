@@ -823,6 +823,10 @@ class TargetSvg(object):
                     self.required_defs.add("Bar")                    
                 elif headarrow == "0":
                     self.style["marker-end"] = "none"
+                else:
+                    print "unknown HeadArrow "+ headarrow
+                    self.style["marker-end"]="url(#Arrow2Lend)"
+                    self.required_defs.add("Arrow2Lend")
 
             if stroke.get("TailArrow") is not None:
                 tailarrow = stroke["TailArrow"]
@@ -839,6 +843,10 @@ class TargetSvg(object):
                     
                 elif tailarrow == "0":
                     self.style["marker-start"]="none"
+                else: 
+                    print "unknown TailArrow "+ headarrow
+                    self.style["marker-end"]="url(#Arrow2Lstart)"
+                    self.required_defs.add("Arrow2Lstart")
 
             if stroke.get("Pattern") is not None:
                 pattern = stroke["Pattern"]
@@ -846,6 +854,9 @@ class TargetSvg(object):
                     self.style["stroke-dasharray"]="3 3"
                 elif pattern == 2:
                     self.style["stroke-dasharray"]="5 5"
+                else:
+                    print "unknown pattern " + str(pattern)
+                    self.style["stroke-dasharray"]="1 1"
 
         if style.get("shadow",{}).get("Draws","NO") != "NO":
             # for some reason graffle has a shadow by default

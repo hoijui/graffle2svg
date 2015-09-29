@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-from tests import get_tests
+
 import unittest
 
+from graffle2svg.tests import get_tests
+
 if __name__ == "__main__":
-    suite = get_tests
-    unittest.main(defaultTest="suite")
+	suite = get_tests
+	unittest.main(defaultTest="suite")

@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
 
-from unittest import makeSuite, TestCase, TestSuite
-from mock import Mock,  patch
-from main import TargetSvg,  GraffleParser,  GraffleInterpreter
 import xml.dom.minidom
+from unittest import makeSuite, TestCase, TestSuite
+from unittest.mock import Mock,  patch
+
+from graffle2svg.main import TargetSvg,  GraffleParser,  GraffleInterpreter
 
 class TestMkHex(TestCase):
     def setUp(self):

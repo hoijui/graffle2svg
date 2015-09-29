@@ -1,39 +1,39 @@
+#!/usr/bin/env python3
 
 from unittest import makeSuite, TestCase, TestSuite
-import geom
+
+from graffle2svg import geom
 
 class TestGeom(TestCase):
-    def assertFigureAlmostEqual(self,first,second,places=7, msg=None):
-        if len(first) != len(second):
-            raise self.failureException, (msg or 'sizes different')
-        for i in range(len(first)):
-            if round(abs(second[i][0]-first[i][0]),places) != 0:
-                            raise self.failureException, \
-                  (msg or '%r != %r within %r places at rank %r' % (first, second, places,i))
-            if round(abs(second[i][1]-first[i][1]),places) != 0:
-                            raise self.failureException, \
-                  (msg or '%r != %r within %r places at rank %r' % (first, second, places,i))
+	def assertFigureAlmostEqual(self,first,second,places=7, msg=None):
+		if len(first) != len(second):
+			raise self.failureException(msg or 'sizes different')
+		for i in range(len(first)):
+			if round(abs(second[i][0]-first[i][0]),places) != 0:
+				raise self.failureException(msg or '%r != %r within %r places at rank %r' % (first, second, places,i))
+			if round(abs(second[i][1]-first[i][1]),places) != 0:
+				raise self.failureException(msg or '%r != %r within %r places at rank %r' % (first, second, places,i))
 
 
 class TestCentre(TestCase):
         
-    def testSimple(self):
-        pts = [[-1,-1],[1,1]]
-        centre = geom.findcentre(pts)
-        self.assertEqual(centre[0], 0)
-        self.assertEqual(centre[1], 0)
-    
-    def testSimpleFloat(self):
-        pts = [[-1.,-1.],[1.,1.]]
-        centre = geom.findcentre(pts)
-        self.assertEqual(centre[0], 0)
-        self.assertEqual(centre[1], 0)
-        
-    def testNonZeroCentre(self):
-        pts = [[-4,-1],[0,1]]
-        centre = geom.findcentre(pts)
-        self.assertEqual(centre[0], -2)
-        self.assertEqual(centre[1], 0)
+	def testSimple(self):
+		pts = [[-1,-1],[1,1]]
+		centre = geom.findcentre(pts)
+		self.assertEqual(centre[0], 0)
+		self.assertEqual(centre[1], 0)
+
+	def testSimpleFloat(self):
+		pts = [[-1.,-1.],[1.,1.]]
+		centre = geom.findcentre(pts)
+		self.assertEqual(centre[0], 0)
+		self.assertEqual(centre[1], 0)
+		
+	def testNonZeroCentre(self):
+		pts = [[-4,-1],[0,1]]
+		centre = geom.findcentre(pts)
+		self.assertEqual(centre[0], -2)
+		self.assertEqual(centre[1], 0)
 
 class TestRotate(TestGeom):
     def testIdentic(self):

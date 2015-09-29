@@ -1,5 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #Copyright (c) 2009, Tim Wintle
+#Copyright (c) 2015, Tim Wintle, Stephane Galland
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -228,12 +229,12 @@ class GraffleInterpreter(object):
                 # TODO: images
                 image_id = graphic["ImageID"]
                 if len(self.imagelist) <= image_id:
-                    print "Error - image out of range"
+                    print("Error - image out of range")
                     return
                 image = self.imagelist[image_id]
                 self.target.addImage(bounds = coords, \
                                   href = image)
-                print "Insert Image - " + str(image)
+                print("Insert Image - " + str(image))
             else:
                 # radius of corners is stored on the style in graffle
                 sty = graphic.get("Style",{})
@@ -305,7 +306,7 @@ class GraffleInterpreter(object):
                                  graphic = graphic,
                                  **extra_opts)
         else:
-            print "Don't know how to display Shape %s"%str(graphic['Shape'])
+            print("Don't know how to display Shape %s"%str(graphic['Shape']))
             
         return True
     
@@ -330,7 +331,7 @@ class GraffleInterpreter(object):
                         continue
                 except:
                     raise
-                    print "could not show shaped graphic"
+                    print("could not show shaped graphic")
                 
             elif cls == "LineGraphic":
                 pts = self.extractMagnetCoordinates(graphics["Points"])
@@ -372,7 +373,7 @@ class GraffleInterpreter(object):
                 if subgraphics is not None:
                     self.target.addLayer(self, reversed(subgraphics))
             else:
-                print "Don't know how to display Class \"%s\""%cls
+                print("Don't know how to display Class \"%s\""%cls)
                 
                 
             if graphics.get("Text") is not None:
@@ -825,7 +826,7 @@ class TargetSvg(object):
                 elif headarrow == "0":
                     self.style["marker-end"] = "none"
                 else:
-                    print "unknown HeadArrow "+ headarrow
+                    print("unknown HeadArrow "+ headarrow)
                     self.style["marker-end"]="url(#Arrow2Lend)"
                     self.required_defs.add("Arrow2Lend")
 
@@ -846,7 +847,7 @@ class TargetSvg(object):
                 elif tailarrow == "0":
                     self.style["marker-start"]="none"
                 else: 
-                    print "unknown TailArrow "+ headarrow
+                    print("unknown TailArrow "+ headarrow)
                     self.style["marker-end"]="url(#Arrow2Lstart)"
                     self.required_defs.add("Arrow2Lstart")
 
@@ -857,7 +858,7 @@ class TargetSvg(object):
                 elif pattern == 2:
                     self.style["stroke-dasharray"]="5 5"
                 else:
-                    print "unknown pattern " + str(pattern)
+                    print("unknown pattern " + str(pattern))
                     self.style["stroke-dasharray"]="1 1"
 
         if style.get("shadow",{}).get("Draws","NO") != "NO":

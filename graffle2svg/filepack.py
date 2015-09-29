@@ -1,5 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #Copyright (c) 2009, Tim Wintle
+#Copyright (c) 2015, Tim Wintle, Stephane Galland
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -52,5 +53,5 @@ class GraffleFilePack(object):
         
 if __name__ == "__main__":
     gfp = GraffleFilePack("gziptest.graffle")
-    print gfp.read()
+    print(gfp.read())
     

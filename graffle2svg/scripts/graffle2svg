@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 """
    Main entry point for graffle2svg
 """
 #Copyright (c) 2009, Tim Wintle
+#Copyright (c) 2015, Tim Wintle, Stephane Galland
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -125,7 +126,7 @@ if __name__ == "__main__":
 
     elif options.stdout == True:
         #print to stdout
-        print gi.target.svg
+        print(gi.target.svg)
     else:
         f = open(optsdict["outfile"],"w")
         f.write(gi.target.svg)

@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=0.3
+Name=graffle2svg
+GenericName=Basic converter from omnigraffle to svg
+X-GNOME-FullName=Basic converter from omnigraffle to svg
+Comment=Convert omnigraffle files to svg images.
+Type=Application
+Categories=Graphics;VectorGraphics;GTK;
+MimeType=application/x-omnigraffle;
+Exec=graffle2svg %F
+TryExec=graffle2svg
+Terminal=true
+StartupNotify=true
+Icon=graffle2svg
+

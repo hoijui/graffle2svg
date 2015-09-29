@@ -1,0 +1,44 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+
+@DPATCH@
+diff -urN build_dir/autolatex.orig/Makefile.PL build_dir/autolatex/Makefile.PL
+--- build_dir/autolatex.orig/Makefile.PL	2013-09-09 10:54:43.000000000 +0200
++++ build_dir/autolatex/Makefile.PL	2013-09-09 11:04:06.435690106 +0200
+@@ -528,6 +528,11 @@
+ 			installLink($cfgFile,$INSTALLDIRECTORY);
+ 			$cfgFile = installCfg('default.cfg','config');
+ 			installLink($cfgFile,$INSTALLDIRECTORY,'default.cfg');
++			# DEBIAN-SPECIFIC:
++			# Remove the config file because it will be re-generated
++			# by DebConf scripts from a configuration model
++			unlink("$cfgFile");
++			install('default.cfg',$INSTALLDIRECTORY,'default.cfg.model');
+ 		}
+ 		else {
+ 			install('default.ist',$INSTALLDIRECTORY);
+@@ -538,6 +543,12 @@
+ 			File::Spec->catfile($INSTALLDIRECTORY,'translators'),
+ 			getFiles('translators','*'));
+ 
++		# DEBIAN-SPECIFIC:
++		# Remove the translators that should not be included in Debian/Ubuntu packages
++		unlink(File::Spec->catfile($INSTALLDIRECTORY, 'translators', 'xmi2pdf_uml2svg.transdef'));
++		unlink(File::Spec->catfile($INSTALLDIRECTORY, 'translators', 'xmi2pdf_xmi2svg.transdef'));
++		unlink(File::Spec->catfile($INSTALLDIRECTORY, 'translators', 'eps2pdf_ps2pdf.transdef'));
++
+ 		if ($need_pm_files) {
+ 			installInto(
+ 				File::Spec->catfile($INSTALLDIRECTORY,'pm','AutoLaTeX', 'Core'),
+@@ -547,6 +558,12 @@
+ 				File::Spec->catfile($INSTALLDIRECTORY,'pm','AutoLaTeX', 'Interpreter'),
+ 				getFiles('pm','AutoLaTeX','Interpreter','*.pm'));
+ 
++			# DEBIAN-SPECIFIC:
++			# Remove the interpreters that should not be included in Debian/Ubuntu packages
++			unlink(File::Spec->catfile($INSTALLDIRECTORY, 'pm', 'AutoLaTeX', 'Interpreter', 'batch.pm'));
++			unlink(File::Spec->catfile($INSTALLDIRECTORY, 'pm', 'AutoLaTeX', 'Interpreter', 'wincmd.pm'));
++
++
+ 			installInto(
+ 				File::Spec->catfile($INSTALLDIRECTORY,'pm','AutoLaTeX', 'Make'),
+ 				getFiles('pm','AutoLaTeX','Make','*.pm'));

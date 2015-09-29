@@ -1,0 +1,5 @@
+graffle2svg (0.3-0arakhne0) trusty; urgency=low
+
+  * First public release as Debian package.
+
+ -- Stephane GALLAND <galland@arakhne.org>  Tue, 29 Sep 2015 12:57:47 +0200

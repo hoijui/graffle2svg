@@ -1,0 +1,57 @@
+#!/bin/sh -e
+# 
+# postrm maintainer script for the Debian graffle2svg package.
+
+# taken from tex-common's postrm-texlsr
+dhit_check_run_without_errors ()
+{
+    silent=0
+    if [ "$1" = "-silent" ] ; then
+        silent=1
+	shift
+    fi
+    if which "$1" >/dev/null; then
+        tempfile=$(mktemp -p /tmp checkrun.XXXXXXXX)
+        if [ $silent = 0 ] ; then
+	    printf "Running '$*'.\nThis may take some time..."
+	fi
+        set +e
+        if "$@" > $tempfile 2>&1 ; then
+            rm -f $tempfile
+            [ $silent = 0 ] && echo " done."
+        else
+            echo
+            echo "$* failed. Output has been stored in"
+            echo "$tempfile"
+            echo "Please include this file if you report a bug."
+            echo
+        fi
+        set -e
+    fi
+
+    return 0
+}
+
+#################################################################
+# Here starts the real action
+#################################################################
+
+case "$1" in
+  remove|disappear)
+    # Be sure that old files are removed
+    rm -rf /usr/lib/python3/dist-packages/graffle2svg*
+    dhit_check_run_without_errors -silent glib-compile-schemas /usr/share/glib-2.0/schemas/
+    ;;
+  purge)
+    # Be sure that old files are removed
+    rm -rf /usr/lib/python3/dist-packages/graffle2svg*
+    dhit_check_run_without_errors -silent glib-compile-schemas /usr/share/glib-2.0/schemas/
+    ;;
+  abort-install|abort-upgrade)
+    # Be sure that old files are removed
+    rm -rf /usr/lib/python3/dist-packages/graffle2svg*
+    ;;
+esac
+
+#DEBHELPER#
+

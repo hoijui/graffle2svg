@@ -179,7 +179,7 @@ class GraffleInterpreter(object):
                 # Graffle version 6 has a background graphic
                 background = mydict["BackgroundGraphic"]
                 # draw this 
-                self.itterateGraffleGraphics([background])
+                self.iterateGraffleGraphics([background])
             elif self.fileinfo.fmt_version < 6:
                 # Version 5 has a CanvasColor property instead
                 colour = mydict.get("CanvasColor")
@@ -206,7 +206,7 @@ class GraffleInterpreter(object):
         self.bounding_box = bounding_box
         graphics = reversed(mydict["GraphicsList"])
         self.target.reset()
-        self.itterateGraffleGraphics(graphics)
+        self.iterateGraffleGraphics(graphics)
         self.target.add_requirements()
 
     def svgAddGraffleShapedGraphic(self, graphic):
@@ -311,7 +311,7 @@ class GraffleInterpreter(object):
             
         return True
     
-    def itterateGraffleGraphics(self,GraphicsList):
+    def iterateGraffleGraphics(self,GraphicsList):
         """parent should be a list of """
         for graphics in GraphicsList:
             # Styling
@@ -482,7 +482,7 @@ class TargetSvg(object):
         g_emt.setAttribute("style",str(self.style))
         current_layer.appendChild(g_emt)
         self.svg_current_layer = g_emt
-        graffleInterpreter.itterateGraffleGraphics(GraphicsList)
+        graffleInterpreter.iterateGraffleGraphics(GraphicsList)
         self.style.popScope()
         self.svg_current_layer = current_layer
     

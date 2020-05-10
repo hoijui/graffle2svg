@@ -1,0 +1,64 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+
+include /usr/share/cdbs/1/rules/buildvars.mk
+
+top_dir      := $(shell pwd)
+debiandist_dir  := $(top_dir)/debian
+install_dir  := $(debiandist_dir)/tmp
+
+.PHONY: binary-indep binary-arch binary clean build install
+
+binary-indep:
+binary-arch: build install
+	@dh_testdir
+	@dh_testroot
+	@dh_installdirs
+	@dh_install "--sourcedir=${install_dir}" --autodest --fail-missing
+	@dh_installmime
+	@dh_installdocs
+	@dh_installchangelogs
+	@dh_installman
+	@dh_link
+	@dh_installdebconf
+	@dh_compress
+	@dh_fixperms
+	@dh_installdeb
+	@dh_shlibdeps
+	@dh_gencontrol
+	@dh_md5sums
+	@dh_builddeb
+
+build:
+	@true
+
+binary: binary-indep binary-arch
+
+install: install-stamp
+
+install-stamp:
+	@dh_testdir
+	@dh_testroot
+	@dh_prep
+	@install -d "$(install_dir)/usr/lib/python3/dist-packages/graffle2svg"
+	@install -m u-X,g-X,o-X "$(top_dir)/graffle2svg"/*.py "$(install_dir)/usr/lib/python3/dist-packages/graffle2svg/"
+	@install -d "$(install_dir)/usr/bin"
+	@install -m u+X,g+X,o+X "$(top_dir)/graffle2svg/scripts"/* "$(install_dir)/usr/bin/"
+	@install -d "$(install_dir)/usr/share/python/runtime.d"
+	@install -m u-X,g-X,o-X "$(debiandist_dir)"/*.rtupdate "$(install_dir)/usr/share/python/runtime.d/"
+	@install -d "$(install_dir)/usr/share/icons/hicolor/scalable/apps/"
+	@install -m u-X,g-X,o-X "$(top_dir)"/icon.svg "$(install_dir)/usr/share/icons/hicolor/scalable/apps/graffle2svg.svg"
+	@install -m u-X,g-X,o-X "$(debiandist_dir)/application-x-omnigraffle.svg" "$(install_dir)/usr/share/icons/hicolor/scalable/apps/application-x-omnigraffle.svg"
+	@install -d "$(install_dir)/usr/share/applications/"
+	@install -m u-X,g-X,o-X "$(debiandist_dir)"/graffle2svg.desktop "$(install_dir)/usr/share/applications/graffle2svg.desktop"
+	@touch $@
+
+clean::
+	dh_testdir
+	dh_testroot
+	dh_prep
+	${RM} *-stamp
+	${RM} "${debiandist_dir}"/*.log "${debiandist_dir}"/files
+
+

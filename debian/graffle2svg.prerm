@@ -1,0 +1,28 @@
+#!/bin/sh -e
+# 
+# prerm maintainer script for the Debian graffle2svg package.
+#
+# summary of how this script can be called:
+#	* <old-prerm> remove
+#	* <old-prerm> upgrade <new-version>
+#	* <new-prerm> failed-upgrade <old-version>
+#	* <conflictor's-prerm> remove in-favour <package> <new-version>
+#	* <deconfigured's-prerm> deconfigure in-favour <package-being-installed> <version>
+#		removing <conflicting-package> <version>
+#
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+# Copied from generated code by dh_python2:
+if which pyclean >/dev/null 2>&1; then
+	pyclean -p graffle2svg
+else
+	dpkg -L graffle2svg | grep \.py$ | while read file
+	do
+		rm -f "${file}"[co] >/dev/null
+  	done
+fi
+
+#DEBHELPER#
+
+exit 0

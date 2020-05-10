@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 
 from unittest import makeSuite, TestCase, TestSuite
+
 from styles import CascadingStyles
 
 class TestDefaults(TestCase):
@@ -34,7 +36,6 @@ class TestScope(TestCase):
         self.cs["font"] == "newfont"
 
 def get_tests():
-    import testCascadingStyles
     TS = TestSuite()
     TS.addTest(makeSuite(TestDefaults))
     TS.addTest(makeSuite(TestScope))

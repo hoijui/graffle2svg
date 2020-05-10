@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 
 from unittest import makeSuite, TestCase, TestSuite
+
 from rtf import extractRTFString, ColorTable
 
 class TestRTF(TestCase):
@@ -55,7 +57,6 @@ class TestColorTable(TestCase):
         self.assertEqual(colors[2], "4b4b4b")
         
 def get_tests():
-    import testCascadingStyles
     TS = TestSuite()
     TS.addTest(makeSuite(TestRTF))
     TS.addTest(makeSuite(TestColorTable))

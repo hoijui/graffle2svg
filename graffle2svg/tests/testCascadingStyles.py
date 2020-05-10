@@ -2,7 +2,7 @@
 
 from unittest import makeSuite, TestCase, TestSuite
 
-from graffle2svg.styles import CascadingStyles
+from styles import CascadingStyles
 
 class TestDefaults(TestCase):
     def setUp(self):

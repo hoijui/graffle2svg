@@ -2,7 +2,7 @@
 
 from unittest import makeSuite, TestCase, TestSuite
 
-from graffle2svg.rtf import extractRTFString, ColorTable
+from rtf import extractRTFString, ColorTable
 
 class TestRTF(TestCase):
     """Tests with valid RTF"""

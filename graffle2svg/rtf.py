@@ -13,7 +13,7 @@
 
 import re
 
-from graffle2svg.styles import CascadingStyles
+from styles import CascadingStyles
 
 def isint(i):
     try:

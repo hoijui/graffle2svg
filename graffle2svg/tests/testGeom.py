@@ -2,7 +2,7 @@
 
 from unittest import makeSuite, TestCase, TestSuite
 
-from graffle2svg import geom
+import geom
 
 class TestGeom(TestCase):
 	def assertFigureAlmostEqual(self,first,second,places=7, msg=None):

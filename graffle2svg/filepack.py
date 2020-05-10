@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #Copyright (c) 2009, Tim Wintle
 #Copyright (c) 2015, Tim Wintle, Stephane Galland
 #All rights reserved.

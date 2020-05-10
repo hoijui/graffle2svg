@@ -13,10 +13,10 @@
 
 import xml.dom.minidom
 
-from graffle2svg.rtf import extractRTFString
-from graffle2svg.styles import CascadingStyles
-from graffle2svg import geom
-from graffle2svg import fileinfo
+from rtf import extractRTFString
+from styles import CascadingStyles
+import geom
+import fileinfo
 
 
         
@@ -30,7 +30,8 @@ class GraffleParser(object):
 
 	def walkGraffleFile(self,filename):
 		import plistlib
-		self.doc_dict = plistlib.readPlist(filename)
+		with open(filename, 'rb') as fp:
+			self.doc_dict = plistlib.load(fp)
 		if self.doc_dict is None:
 			raise Exception('File not found or not Plist format')
 		return self.doc_dict
@@ -927,7 +928,7 @@ if __name__ == "__main__":
 	gi.dict = GraffleParser().walkGraffleFile("progit.graffle")
 	for source_index in range(82):
 		gi.extractPage(page=source_index)
-		f = open("figure"+str(source_index)+".svg","w")
+		f = open("figure"+str(source_index)+".svg","wb")
 		f.write(gi.target.svg)
 		f.close()  
     

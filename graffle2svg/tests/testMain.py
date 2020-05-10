@@ -4,7 +4,7 @@ import xml.dom.minidom
 from unittest import makeSuite, TestCase, TestSuite
 from unittest.mock import Mock,  patch
 
-from graffle2svg.main import TargetSvg,  GraffleParser,  GraffleInterpreter
+from main import TargetSvg,  GraffleParser,  GraffleInterpreter
 
 class TestMkHex(TestCase):
     def setUp(self):
@@ -64,21 +64,21 @@ class TestGraffleInterpreterBoundingBox(TestCase):
 		del self.MockTarget
 		del self.gi
 
-	@patch('graffle2svg.geom.out_of_boundingbox')
+	@patch('geom.out_of_boundingbox')
 	def testTextWithCoordinatesOutOfBoundinBoxShouldNotAddToTarget(self, mockBounds):
 		self.gi.bounding_box = ((-1, -1),  (1,  1))
 		mockBounds.return_value = True
 		self.gi.iterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect', 'ID':5, 'Text':{'Text':'test'}}])
 		self.assertFalse(any([ mthd_call[0]=='addText' for mthd_call in self.MockTarget.method_calls]))
 
-	@patch('graffle2svg.geom.out_of_boundingbox')
+	@patch('geom.out_of_boundingbox')
 	def testShapedGraphicWithCoordinatesOutOfBoundinBoxShouldNotAddToTarget(self, mockBounds):
 		self.gi.bounding_box = ((-1, -1),  (1,  1))
 		mockBounds.return_value = True
 		self.gi.iterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect', 'ID':5}])
 		self.assertFalse(any([ mthd_call[0]=='addRect' for mthd_call in self.MockTarget.method_calls]))
 		
-	@patch('graffle2svg.geom.out_of_boundingbox')
+	@patch('geom.out_of_boundingbox')
 	def testShapedGraphicWithCoordinatesInBoundingBoxShouldAddToTarget(self, mockBounds):
 		self.gi.bounding_box = ((-1, -1),  (1,  1))
 		mockBounds.return_value = False
@@ -90,14 +90,14 @@ class TestGraffleInterpreterBoundingBox(TestCase):
 		self.gi.iterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect',  'ID':5}])
 		self.assertTrue(any([ mthd_call[0]=='addRect' for mthd_call in self.MockTarget.method_calls]))
 
-	@patch('graffle2svg.geom.out_of_boundingbox')
+	@patch('geom.out_of_boundingbox')
 	def testLineGraphicWithCoordinatesOutOfBoundinBoxShouldNotAddToTarget(self, mockBounds):
 		self.gi.bounding_box = ((-1, -1),  (1,  1))
 		mockBounds.return_value = True
 		self.gi.iterateGraffleGraphics([{'Class':'LineGraphic', 'Points':['{0, 0}', '{756, 553}'], 'ID':5}])
 		self.assertFalse(any([ mthd_call[0]=='addPath' for mthd_call in self.MockTarget.method_calls]))
 		
-	@patch('graffle2svg.geom.out_of_boundingbox')
+	@patch('geom.out_of_boundingbox')
 	def testLineGraphicWithCoordinatesInBoundingBoxShouldAddToTarget(self, mockBounds):
 		self.gi.bounding_box = ((-1, -1),  (1,  1))
 		mockBounds.return_value = False

@@ -1,6 +1,6 @@
-# Graffle2Svg Reloaded #
+**This project is mostly dead and about to be archived**
 
-[![Build Status](https://secure.travis-ci.org/jnavila/graffle2svg.png)](http://travis-ci.org/jnavila/graffle2svg)
+# Graffle2Svg Reloaded #
 
 This project is a fork of graffle2svg hosted at [google](http://code.google.com/p/graffle2svg/). *BUT* I changed the whole architecture of the program and added a lot of new features:
 
@@ -13,9 +13,5 @@ This project is a fork of graffle2svg hosted at [google](http://code.google.com/
 
 All these features were not back ported due to the change of architecture. 
  
-In progress is an adaptation to use the script as an [Inkscape](http://inkscape.org) import plugin. 
  
-I am seriously considering renaming the project as it no longer matches the original code.
- 
-If you are interested in this project, please fill a ticket or submit a pull request.
 

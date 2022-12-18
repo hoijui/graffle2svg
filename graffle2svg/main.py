@@ -694,7 +694,11 @@ class TargetSvg(object):
 		tspan_node.setAttribute("y",str(y_pos))
 		if (opts.get("style") is not None) and len(opts.get("style"))>0:
 			thestyle = opts.get("style")
+			parstyle = textnode.getAttribute("style")	# parent style
 			for (k,v) in thestyle.items():
+				if parstyle.find(k) >= 0:
+					# the parent text has the same attribute in the style
+					next
 				tspan_node.setAttribute(k,v)
 		actual_string = self.svg_dom.createTextNode(opts.get("text"," "))
 		tspan_node.appendChild(actual_string)

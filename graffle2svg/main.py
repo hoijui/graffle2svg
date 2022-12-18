@@ -13,10 +13,10 @@
 
 import xml.dom.minidom
 
-from rtf import extractRTFString
-from styles import CascadingStyles
-import geom
-import fileinfo
+from .rtf import extractRTFString
+from .styles import CascadingStyles
+from . import geom
+from . import fileinfo
 
 
         

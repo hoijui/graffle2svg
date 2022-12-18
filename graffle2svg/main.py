@@ -211,6 +211,11 @@ class GraffleInterpreter(object):
 		self.target.add_requirements()
 		self.target.add_document_bounds()
 
+		bgcoords = self.extractBoundCOordinates(
+			self.doc_dict["BackgroundGraphic"]["Bounds"])
+		self.target.svg_tag.setAttribute("width", f"{bgcoords[2]}")
+		self.target.svg_tag.setAttribute("height", f"{bgcoords[3]}")
+
 	def svgAddGraffleShapedGraphic(self, graphic):
 		shape = graphic['Shape']
 

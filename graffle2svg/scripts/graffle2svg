@@ -101,10 +101,7 @@ if __name__ == "__main__":
         graffle_data = sys.stdin.read()
         gi.dict = GraffleParser().walkGraffle(graffle_data)
     else:
-        import graffle2svg.filepack as filepack
-        grafflefilepack = filepack.GraffleFilePack(optsdict["infile"])
-        gi.dict = GraffleParser().walkGraffleFile(grafflefilepack.fileObject)
-        grafflefilepack.close()
+        gi.dict = GraffleParser().walkGraffleFile(optsdict["infile"])
 
     try:        
         page = int(options.page)

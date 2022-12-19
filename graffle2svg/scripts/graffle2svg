@@ -104,7 +104,7 @@ if __name__ == "__main__":
         gi.dict = GraffleParser().walkGraffleFile(optsdict["infile"])
 
     try:        
-        page = int(options.page)
+        page = int(options.page or 0)
         gi.extractPage(page=page, bounding_box=optsdict["area"])
     except:
         gi.extractPage()

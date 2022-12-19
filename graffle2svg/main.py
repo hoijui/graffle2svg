@@ -491,6 +491,8 @@ class TargetSvg(object):
 
 	def extract_colour(self,col):
 		# only gets rgb values (ignores a)
+		if not "r" in col:
+			return None
 		return "".join( [self.mkHex(col["r"]), 
 				        self.mkHex(col["g"]), 
 				        self.mkHex(col["b"])] )

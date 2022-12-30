@@ -510,7 +510,7 @@ class TargetSvg(object):
 				font_col = "000000"
 		fontstuffs.append("fill:#%s"%font_col)
 		fontstuffs.append("stroke:#%s"%font_col)
-		fontstuffs.append("stroke-width:0.1px")
+		fontstuffs.append("stroke-width:0")
 		
 		fontfam = font.get("Font")
 		if fontfam is not None:

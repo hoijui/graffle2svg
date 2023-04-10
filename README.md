@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 # Graffle2Svg _Reloaded_
 
 This project is a fork of [`graffle2svg`@google-code](

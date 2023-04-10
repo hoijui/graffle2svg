@@ -911,7 +911,7 @@ class TargetSvg(object):
 				elif tailarrow == "0":
 					self.style["marker-start"]="none"
 				else:
-					print("unknown TailArrow "+ headarrow)
+					print("unknown TailArrow "+ tailarrow)
 					self.style["marker-end"]="url(#Arrow2Lstart)"
 					self.required_defs.add("Arrow2Lstart")
 

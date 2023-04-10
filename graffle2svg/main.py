@@ -217,7 +217,7 @@ class GraffleInterpreter(object):
 		self.target.add_document_bounds()
 
 		bgcoords = self.extractBoundCOordinates(
-			self.doc_dict["BackgroundGraphic"]["Bounds"])
+			mydict["BackgroundGraphic"]["Bounds"])
 		self.target.svg_tag.setAttribute("width", f"{bgcoords[2]}")
 		self.target.svg_tag.setAttribute("height", f"{bgcoords[3]}")
 

@@ -1,0 +1,9 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: graffle2svg
+Upstream-Contact: Robin Vobruba <hoijui.quaero@gmail.com>
+Source: https://github.com/hoijui/graffle2svg
+
+Files: debian/**
+Copyright:
+    2015 Stéphane Galland <galland@arakhne.org>
+License: BSD-3-Clause

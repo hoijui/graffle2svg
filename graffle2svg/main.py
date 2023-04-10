@@ -20,7 +20,7 @@ from . import geom
 from . import fileinfo
 
 
-        
+
 
 class GraffleParser(object):
 
@@ -40,14 +40,14 @@ class GraffleParser(object):
 		if self.doc_dict is None:
 			raise Exception('File not found or not Plist format')
 		return self.doc_dict
-		
+
 	def walkGraffle(self, xmlstr, **kwargs):
 		"""Walk over the file"""
 		self.g_dom = xml.dom.minidom.parseString(xmlstr)
 
 		self.walkGraffleDoc(self.g_dom, **kwargs)
-		
-		
+
+
 	def walkGraffleDoc(self, parent):
 		# want to pass this around like a continuation
 		cont = self.nodeListGen(parent.childNodes)
@@ -59,7 +59,7 @@ class GraffleParser(object):
 			if localname == "plist":
 				# Apple's main container
 				self.walkGraffleDoc(e)
-	
+
 			if localname == "dict":
 				self.doc_dict = self.ReturnGraffleDict(e)
 
@@ -69,7 +69,7 @@ class GraffleParser(object):
 			yield e
 
 	def ReturnGraffleNode(self, parent):
-		"""Return a python representation of the 
+		"""Return a python representation of the
 		   node passed"""
 		if parent.nodeType == parent.TEXT_NODE:
 			return parent.wholeText
@@ -142,7 +142,7 @@ class GraffleInterpreter(object):
 
 	def getdict(self):
 		return self.doc_dict
-		
+
 	def setdict(self, doc_dict):
 		self.doc_dict = doc_dict
 		self.fileinfo = None
@@ -152,7 +152,7 @@ class GraffleInterpreter(object):
 			self.fileinfo = fileinfo.FileInfo(self.doc_dict)
 			# Graffle lists it's image references separately
 			self.imagelist = self.doc_dict.get("ImageList",[])
-		    
+
 	dict = property(getdict, setdict, doc ="internal graffle dictionary")
 
 	def parseCoords(self, s):
@@ -184,14 +184,14 @@ class GraffleInterpreter(object):
 			if self.fileinfo.fmt_version >= 6:
 				# Graffle version 6 has a background graphic
 				background = mydict["BackgroundGraphic"]
-				# draw this 
+				# draw this
 				self.iterateGraffleGraphics([background])
 			elif self.fileinfo.fmt_version < 6:
 				# Version 5 has a CanvasColor property instead
 				colour = mydict.get("CanvasColor")
 				if colour is not None:
 					# We have to guess the document's dimensions from the print size
-					# - these numbers appear to match up with the background size in 
+					# - these numbers appear to match up with the background size in
 					#  version 6.
 					origin = self.parseCoords(mydict.get("CanvasOrigin","{0,0}"))
 					print_info = self.fileinfo.printinfo
@@ -253,7 +253,7 @@ class GraffleInterpreter(object):
 				sty = graphic.get("Style",{})
 				stroke = sty.get("stroke",{})
 				radius = stroke.get("CornerRadius",None)
-	
+
 				x, y   = coords[0], coords[1]
 				width  = coords[2]# - coords[0]
 				height = coords[3]# - coords[1]
@@ -282,7 +282,7 @@ class GraffleInterpreter(object):
 									height = height,
 									rx=(width - math.sqrt(width*width-height*height))/2,
 									ry=height/2,
-									**extra_opts)            
+									**extra_opts)
 		elif shape == "HorizontalTriangle":
 			self.target.addHorizontalTriangle(
 						                bounds = coords,
@@ -320,9 +320,9 @@ class GraffleInterpreter(object):
 						         **extra_opts)
 		else:
 			print("Don't know how to display Shape %s"%str(graphic['Shape']))
-		
+
 		return True
-    
+
 	def iterateGraffleGraphics(self,GraphicsList):
 		"""parent should be a list of """
 		for graphics in GraphicsList:
@@ -330,14 +330,14 @@ class GraffleInterpreter(object):
 			self.target.style.appendScope()
 			if graphics.get("Style") is not None:
 				self.target.setGraffleStyle(graphics.get("Style"))
-            
+
 			cls = graphics["Class"]
 			if cls == "SolidGraphic":
-				# used as background - add a 
+				# used as background - add a
 				shallowcopy = dict({"Shape":"Rectangle"})
 				shallowcopy.update(graphics)
 				self.svgAddGraffleShapedGraphic(shallowcopy)
-		
+
 			elif cls == "ShapedGraphic":
 				try:
 					if not self.svgAddGraffleShapedGraphic(graphics):
@@ -374,21 +374,21 @@ class GraffleInterpreter(object):
 
 
 					self.target.addPath( pts,id=str(graphics["ID"]))
-		
+
 			elif cls == "TableGroup":
 				# In Progress
 				table_graphics = graphics.get("Graphics")
 				if table_graphics is not None:
 					self.target.addLayer(self, reversed(table_graphics))
-	
+
 			elif cls == "Group":
 				subgraphics = graphics.get("Graphics")
 				if subgraphics is not None:
 					self.target.addLayer(self, reversed(subgraphics))
 			else:
 				print("Don't know how to display Class \"%s\""%cls)
-		
-		
+
+
 			if graphics.get("Text") is not None:
 				# have to write some text too ...
 				self.target.setGraffleFont(graphics.get("FontInfo"))
@@ -403,7 +403,7 @@ class GraffleInterpreter(object):
 							     x = x+dx, y = y+dy, width = width-2*dx, height = height-2*dy, fontinfo = graphics.get("FontInfo"),id=graphics["ID"])
 
 
-						         
+
 			self.target.style.popScope()
 
 class TargetSvg(object):
@@ -434,7 +434,7 @@ class TargetSvg(object):
 			if maxy > ay:
 				ay = maxy
 			self.svg_bounds = (ix, iy, ax, ay)
-       
+
 	def __bb_point(self, px, py):
 		if not self.svg_bounds:
 			self.svg_bounds = (px, py, px, py)
@@ -472,7 +472,7 @@ class TargetSvg(object):
 		self.style["stroke-width"]="1.000000px"
 
 		self.svg_graphroot = self.svg_dom.createElement("g")
-		
+
 		graphic_tag = self.svg_dom.createElement("g")
 		graphic_tag.setAttribute("style",str(self.style))
 		self.svg_graphroot.appendChild(graphic_tag)
@@ -493,8 +493,8 @@ class TargetSvg(object):
 		# only gets rgb values (ignores a)
 		if not "r" in col:
 			return None
-		return "".join( [self.mkHex(col["r"]), 
-				        self.mkHex(col["g"]), 
+		return "".join( [self.mkHex(col["r"]),
+				        self.mkHex(col["g"]),
 				        self.mkHex(col["b"])] )
 
 	def setGraffleFont(self, font):
@@ -511,7 +511,7 @@ class TargetSvg(object):
 		fontstuffs.append("fill:#%s"%font_col)
 		fontstuffs.append("stroke:#%s"%font_col)
 		fontstuffs.append("stroke-width:0")
-		
+
 		fontfam = font.get("Font")
 		if fontfam is not None:
 			if fontfam == "LucidaGrande":
@@ -521,13 +521,13 @@ class TargetSvg(object):
 			elif fontfam == "GillSans":
 				fontfam = "Arial Narrow"
 			fontstuffs.append("font-family: %s"%fontfam)
-		
+
 		size = font.get("Size")
 		if size is not None:
 			fontstuffs.append("font-size:%dpx"%int(size) )
 
 		self.svg_current_font = ";".join(fontstuffs)
-        
+
 	def addLayer(self, graffleInterpreter, GraphicsList):
 		current_layer = self.svg_current_layer
 		self.style.appendScope()
@@ -538,7 +538,7 @@ class TargetSvg(object):
 		graffleInterpreter.iterateGraffleGraphics(GraphicsList)
 		self.style.popScope()
 		self.svg_current_layer = current_layer
-    
+
 	def addAdjustableArrow(self, bounds, graphic,**opts):
 		x,y,width,height = [float(a) for a in bounds]
 		ratio = float(graphic["ShapeData"]["ratio"])
@@ -546,8 +546,8 @@ class TargetSvg(object):
 		neck_delta = height*(1-ratio)/2
 		self.addPath([[x,y+neck_delta], [x+width-neck,y+neck_delta], [x+width-neck,y],
 				      [x+width,y+height/2], [x+width-neck,y+height], [x+width-neck,y+height-neck_delta],
-				      [x,y+height-neck_delta]],closepath=True,**opts) 
-                             
+				      [x,y+height-neck_delta]],closepath=True,**opts)
+
 
 	def addDiamond(self,bounds,**opts):
 		x, y, width, height = [float(a) for a in bounds]
@@ -560,11 +560,11 @@ class TargetSvg(object):
 		mypts = pts
 		if opts.get("HFlip",False):
 			mypts = geom.h_flip_points(mypts)
-		if opts.get("VFlip",False):            
+		if opts.get("VFlip",False):
 			mypts = geom.v_flip_points(mypts)
 		if opts.get("Rotation") is not None:
 			mypts = geom.rotate_points(mypts,opts["Rotation"])
-		
+
 		for (localx, localy) in mypts:
 			self.__bb_point(localx, localy)
 
@@ -577,13 +577,13 @@ class TargetSvg(object):
 		path_tag.setAttribute("style", str(self.style.scopeStyle()))
 		path_tag.setAttribute("d", line_string)
 		self.svg_current_layer.appendChild(path_tag)
-        
+
 	def addHorizontalTriangle(self, bounds, **opts):
 		"""Graffle has the "HorizontalTriangle" Shape"""
 		x,y,width,height = [float(a) for a in bounds]
 		self.addPath([[x,y],[x+width,y+height/2], [x,y+height]], \
 				        closepath=True, **opts)
-                        
+
 	def addImage(self, bounds, **opts):
 		"""SVG viewers should support images - unfortunately many don't :-("""
 		x,y,width,height = [float(a) for a in bounds]
@@ -596,7 +596,7 @@ class TargetSvg(object):
 		image_tag.setAttribute("style", str(self.style.scopeStyle()))
 		self.__bb_box(x, y, width, height)
 		self.svg_current_layer.appendChild(image_tag)
-        
+
 	def addRightTriangle(self,  bounds, **opts):
 		"""Graffle has the "RightTriangle" Shape"""
 		x,y,width,height = [float(a) for a in bounds]
@@ -608,7 +608,7 @@ class TargetSvg(object):
 		x,y,width,height = [float(a) for a in bounds]
 		self.addPath( [[x,y],[x+width,y], [x+width/2,y+height]], \
 				        closepath=True, **opts)
-            
+
 	def addRect(self,  **opts):
 		"""Add an svg rect"""
 		if opts is None:
@@ -624,8 +624,8 @@ class TargetSvg(object):
 			rect_tag.setAttribute("ry",str(opts["ry"]))
 		rect_tag.setAttribute("style", str(self.style.scopeStyle()))
 		self.svg_current_layer.appendChild(rect_tag)
-		self.__bb_box(opts.get("x","0"), opts.get("y","0"), opts["width"], opts["height"])		
-        
+		self.__bb_box(opts.get("x","0"), opts.get("y","0"), opts["width"], opts["height"])
+
 	def addEllipse(self,  bounds, **opts):
 		c = [bounds[i] + (bounds[i+2]/2.) for i in [0,1]] # centre of circle
 		rx = bounds[2]/2.
@@ -638,7 +638,7 @@ class TargetSvg(object):
 		circle_tag.setAttribute("rx", str(rx))
 		circle_tag.setAttribute("ry", str(ry))
 		self.svg_current_layer.appendChild(circle_tag)
-		self.__bb_box(c[0] - rx, c[1] - ry, c[0] + rx, c[1] + ry)		
+		self.__bb_box(c[0] - rx, c[1] - ry, c[0] + rx, c[1] + ry)
 
 	def addCloud(self,bounds,**opts):
 		"""Add a cloud element"""
@@ -652,7 +652,7 @@ class TargetSvg(object):
 		def_node = p.childNodes[0]
 		cloud_tag.appendChild(def_node)
 		self.svg_current_layer.appendChild(cloud_tag)
-		self.__bb_box(x, y, dx, dy)		
+		self.__bb_box(x, y, dx, dy)
 
 	def addText(self,**opts):
 		"""Add an svg text element"""
@@ -663,7 +663,7 @@ class TargetSvg(object):
 		# text_tag.setAttribute("dominant-baseline","mathematical")
 		text_tag.setAttribute("style", self.svg_current_font)
 		self.svg_current_layer.appendChild(text_tag)
-        
+
 		# Generator
 		lines = extractRTFString(opts["rtftext"])
 		font_info =  opts.get("fontinfo",None)
@@ -684,7 +684,7 @@ class TargetSvg(object):
 			self.addLine(text_tag,text = span["string"], style = span["style"],\
 						y_pos=y_diff, line_height =font_height, **opts)
 		self.__bb_box(opts.get("x", "0"), opts.get("y", "0"), opts.get("width", "0"), opts.get("height", "0"))
-        
+
 	def addLine(self,textnode, **opts):
 		"""Add a line of text"""
 		tspan_node = self.svg_dom.createElement("tspan")
@@ -776,7 +776,7 @@ class TargetSvg(object):
 			</marker></defs>""")
 			def_node = p.childNodes[0]
 			for node in def_node.childNodes:
-				self.svg_def.appendChild(node)        
+				self.svg_def.appendChild(node)
 
 		if "Arrow2Lstart" in self.required_defs:
 			p = xml.dom.minidom.parseString("""
@@ -791,11 +791,11 @@ class TargetSvg(object):
 				 id='pathStickArrow'
 				 d='M -10.0,-2.0 L 0.0,0.0 L -10.0,2.0'
 				 style='fill:none;stroke:#000000;stroke-width:1.0px;marker-start:none'/>
-			</marker></defs>""")           
+			</marker></defs>""")
 			def_node = p.childNodes[0]
 			for node in def_node.childNodes:
 				self.svg_def.appendChild(node)
-				
+
 		if "DropShadow" in self.required_defs:
 			p = xml.dom.minidom.parseString("""
 			<defs><filter id='DropShadow' filterRes='100' x='0' y='0'>
@@ -809,7 +809,7 @@ class TargetSvg(object):
 			def_node = p.childNodes[0]
 			for node in def_node.childNodes:
 				self.svg_def.appendChild(node)
-				
+
 		if "CrowBall" in self.required_defs:
 			p = xml.dom.minidom.parseString("""
 			<defs><marker
@@ -818,14 +818,14 @@ class TargetSvg(object):
 			orient='auto'
 			id='mCrowBall'
 			style='overflow:visible'>
-			<path d='M 0.0,2.5 L 7.5,0.0 L 0.0,-2.5' 
+			<path d='M 0.0,2.5 L 7.5,0.0 L 0.0,-2.5'
 			 style='stroke:#000;stroke-width:1.0px;marker-start:none;fill:none;' />
 			<circle cx='10' cy='0' r='2.5' style='stroke-width:1px; stroke: #000; fill:none;'/>
 			</marker></defs>""")
 			def_node = p.childNodes[0]
 			for node in def_node.childNodes:
 				self.svg_def.appendChild(node)
-				
+
 		if "Bar" in self.required_defs:
 			p = xml.dom.minidom.parseString("""
 			<defs><marker
@@ -834,7 +834,7 @@ class TargetSvg(object):
 			orient='auto'
 			id='mBar'
 			style='overflow:visible'>
-			<path d='M -7.5,-2.5 L -7.5,2.5' 
+			<path d='M -7.5,-2.5 L -7.5,2.5'
 			 style='stroke:#000;stroke-width:1.0px;marker-start:none;fill:none;' />
 			</marker></defs>""")
 			def_node = p.childNodes[0]
@@ -851,8 +851,8 @@ class TargetSvg(object):
 			for node in def_node.childNodes:
 				self.svg_def.appendChild(node)
 
-            
-	def setGraffleStyle(self, style):        
+
+	def setGraffleStyle(self, style):
 		if style.get("fill") is not None:
 			fill = style.get("fill")
 			if fill.get("Draws","") == "NO":
@@ -863,7 +863,7 @@ class TargetSvg(object):
 				if grap_col is not None:
 					fill_col = self.extract_colour(grap_col)
 					self.style["fill"]="#%s"%fill_col
-				
+
 		if style.get("stroke") is not None:
 			stroke = style.get("stroke")
 			if stroke.get("Draws","") == "NO":
@@ -892,7 +892,7 @@ class TargetSvg(object):
 				elif headarrow == "Bar":
 					#TODO
 					self.style["marker-end"]="url(#mBar)"
-					self.required_defs.add("Bar")                    
+					self.required_defs.add("Bar")
 				elif headarrow == "0":
 					self.style["marker-end"] = "none"
 				else:
@@ -913,10 +913,10 @@ class TargetSvg(object):
 				elif tailarrow == "CrowBall":
 					self.style["marker-start"]  = "url(#mCrowBall)"
 					self.required_defs.add("CrowBall")
-				    
+
 				elif tailarrow == "0":
 					self.style["marker-start"]="none"
-				else: 
+				else:
 					print("unknown TailArrow "+ headarrow)
 					self.style["marker-end"]="url(#Arrow2Lstart)"
 					self.required_defs.add("Arrow2Lstart")
@@ -946,5 +946,5 @@ if __name__ == "__main__":
 		gi.extractPage(page=source_index)
 		f = open("figure"+str(source_index)+".svg","wb")
 		f.write(gi.target.svg)
-		f.close()  
-    
+		f.close()
+

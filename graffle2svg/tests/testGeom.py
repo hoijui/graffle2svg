@@ -16,7 +16,7 @@ class TestGeom(TestCase):
 
 
 class TestCentre(TestCase):
-        
+
 	def testSimple(self):
 		pts = [[-1,-1],[1,1]]
 		centre = geom.findcentre(pts)
@@ -28,7 +28,7 @@ class TestCentre(TestCase):
 		centre = geom.findcentre(pts)
 		self.assertEqual(centre[0], 0)
 		self.assertEqual(centre[1], 0)
-		
+
 	def testNonZeroCentre(self):
 		pts = [[-4,-1],[0,1]]
 		centre = geom.findcentre(pts)
@@ -45,12 +45,12 @@ class TestRotate(TestGeom):
         pts=((-1., 1.), (1., 1.))
         rotated =geom.rotate_points(pts, angle=180.)
         self.assertFigureAlmostEqual(rotated,[[1., 1.], [-1., 1.]])
- 
+
     def test360(self):
         pts=((-1., 1.), (1., 1.))
         rotated =geom.rotate_points(pts, 360)
         self.assertFigureAlmostEqual(rotated,((-1.0, 1.0), (1.0, 1.0)))
-        
+
     def test90(self):
         pts=((-1., 1.), (3., 1.),(-1,-2))
         rotated =geom.rotate_points(pts,90)
@@ -60,20 +60,20 @@ class TestRotate(TestGeom):
         pts=((-1., 1.), (1., 1.))
         rotated =geom.rotate_points(pts, 359.999999)
         self.assertFigureAlmostEqual(rotated,((-1.0, 1.0), (1.0, 1.0)))
-        
+
     def testRoundingOpposite(self):
         pts=((-1., 1.), (1., 1.))
         rotated =geom.rotate_points(pts, 180.000001)
         self.assertFigureAlmostEqual(rotated,[[1., 1.], [-1., 1.]])
 
 class TestBoundingBox(TestGeom):
-    
+
     def testBbInside(self):
         ''' test that the function returns False when all points are inside bounding box'''
         pts=((-1, -1), (1., 1.))
         bb=((-2, -3), (3, 4))
         self.assertFalse(geom.out_of_boundingbox(pts, bb))
-        
+
     def testBbMinX(self):
         '''Test that the function returns True if one point is on the left of bounding box'''
         pts=((-1, -1), (1., 1.))
@@ -97,12 +97,12 @@ class TestBoundingBox(TestGeom):
         pts=((-1, -1), (1., 1.))
         bb=((-2, -3), (3, 0))
         self.assertTrue(geom.out_of_boundingbox(pts, bb))
-    
+
     def testBbNoneReturnsFalse(self):
         ''' Test that providing a None boundingbox returns False'''
         pts=((-1, -1), (1., 1.))
         self.assertFalse(geom.out_of_boundingbox(pts, None))
-        
+
 def get_tests():
     TS = TestSuite()
     TS.addTest(makeSuite(TestCentre))

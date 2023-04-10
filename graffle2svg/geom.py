@@ -38,8 +38,8 @@ def h_flip_points(pts,centre=None):
     for (x,y) in pts:
         outpts.append([xc + (-1. * (x-xc)), y])
     return outpts
-    
-    
+
+
 def v_flip_points(pts,centre=None):
     """Vertical flip"""
     if centre is None:
@@ -49,7 +49,7 @@ def v_flip_points(pts,centre=None):
     for (x,y) in pts:
         outpts.append([x, yc + (-1 * (y-yc))])
     return outpts
-    
+
 def rotate_points(pts, angle=0, centre=None):
     if centre is None:
         centre = findcentre(pts)

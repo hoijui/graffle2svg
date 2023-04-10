@@ -28,13 +28,13 @@ class GraffleFilePack(object):
 		else:
 			raise Exception("Invalid input file: %s" % (fn))
 
-	@property        
+	@property
 	def fileObject(self):
 		return self.__file
 
 	def read(self):
 		return self.__file.read()
-		
+
 	def close(self):
 		self.__file.close()
 
@@ -76,9 +76,9 @@ class GraffleFilePack(object):
 		result = chardet.detect(fh.read())
 		fh.close()
 		return result
-        
-        
+
+
 if __name__ == "__main__":
     gfp = GraffleFilePack("gziptest.graffle")
     print(gfp.read())
-    
+

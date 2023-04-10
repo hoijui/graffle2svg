@@ -28,7 +28,7 @@ class TestMkHex(TestCase):
 class TestGraffleParser(TestCase):
     def setUp(self):
         self.gp = GraffleParser()
-    
+
     def tearDown(self):
         del self.gp
 
@@ -36,7 +36,7 @@ class TestGraffleParser(TestCase):
         p = xml.dom.minidom.parseString("<dict><key>ImageCounter</key><integer>1</integer></dict>")
         dict = self.gp.ReturnGraffleDict(p.firstChild)
         self.assertEqual(dict['ImageCounter'], '1')
- 
+
     def testGraffleDictReal(self):
         p = xml.dom.minidom.parseString("<dict><key>Size</key><real>19</real></dict>")
         dict = self.gp.ReturnGraffleDict(p.firstChild)
@@ -59,7 +59,7 @@ class TestGraffleInterpreterBoundingBox(TestCase):
 		self.MockTarget = Mock()
 		self.MockTarget.style=scope()
 		self.gi.setTarget(self.MockTarget)
-		
+
 	def tearDown(self):
 		del self.MockTarget
 		del self.gi
@@ -77,7 +77,7 @@ class TestGraffleInterpreterBoundingBox(TestCase):
 		mockBounds.return_value = True
 		self.gi.iterateGraffleGraphics([{'Class':'ShapedGraphic', 'Bounds':'{{0, 0}, {756, 553}}','Shape':'RoundRect', 'ID':5}])
 		self.assertFalse(any([ mthd_call[0]=='addRect' for mthd_call in self.MockTarget.method_calls]))
-		
+
 	@patch('geom.out_of_boundingbox')
 	def testShapedGraphicWithCoordinatesInBoundingBoxShouldAddToTarget(self, mockBounds):
 		self.gi.bounding_box = ((-1, -1),  (1,  1))
@@ -96,7 +96,7 @@ class TestGraffleInterpreterBoundingBox(TestCase):
 		mockBounds.return_value = True
 		self.gi.iterateGraffleGraphics([{'Class':'LineGraphic', 'Points':['{0, 0}', '{756, 553}'], 'ID':5}])
 		self.assertFalse(any([ mthd_call[0]=='addPath' for mthd_call in self.MockTarget.method_calls]))
-		
+
 	@patch('geom.out_of_boundingbox')
 	def testLineGraphicWithCoordinatesInBoundingBoxShouldAddToTarget(self, mockBounds):
 		self.gi.bounding_box = ((-1, -1),  (1,  1))

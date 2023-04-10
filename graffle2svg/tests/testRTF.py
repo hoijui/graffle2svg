@@ -17,7 +17,7 @@ class TestRTF(TestCase):
         lines = extractRTFString(r"{\rtf\ansi\fs10\b testing}")
         self.assertEqual(len(lines), 1)
         self.assertEqual(lines[0]['style'],  {"font-size":"5.0px","font-weight":"bold"})
-        
+
     def testfont(self):
         lines = extractRTFString(r"""{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
@@ -55,7 +55,7 @@ class TestColorTable(TestCase):
         self.assertEqual(colors[0], "000000")
         self.assertEqual(colors[1], "ffffff")
         self.assertEqual(colors[2], "4b4b4b")
-        
+
 def get_tests():
     TS = TestSuite()
     TS.addTest(makeSuite(TestRTF))

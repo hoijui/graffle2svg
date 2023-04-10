@@ -35,10 +35,10 @@ def extractRTFString(s):
     style = CascadingStyles()
     # Want to set these as defaults even if not specified
     style.appendScope()
-    """TODO: 
-     extract styling 
-     
-     e.g. 
+    """TODO:
+     extract styling
+
+     e.g.
      {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf460
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
@@ -101,7 +101,7 @@ def extractRTFString(s):
                 i, std_string = do_instruction(inst_code, i,  std_string)
             instruction = True
             inst_code = ""
-        
+
         if instruction:
             if c == " ":
                 instruction = False
@@ -159,7 +159,7 @@ class FontTable(object):
                  font_opns = self.fonts.get(fontnum,{})
                  font_opns["font-family"] = "Serif"
                  self.fonts[fontnum] = font_opns
-        
+
         while i < len(defn):
             c = defn[i]
             if c == "}":
@@ -205,7 +205,7 @@ class ColorTable(object):
     """ Create a table of colors from a RTF definition in the form of {\colortbl;\red255\green255\blue255;\red75\green75\blue75;}"""
     def __init__(self):
         self.color = []
-    
+
     def parseTable(self,defn, startidx ):
         endidx = defn.find("}", startidx)
         primitive_reg = re.compile(r"(\D+)(\d+)")
@@ -217,7 +217,7 @@ class ColorTable(object):
                     primitive, value = primitive_match.groups()
                     color[primitive] = int(value)
             self.color.append("%02x"%color['red'] + "%02x"%color['green'] + "%02x"%color['blue'])
-        return endidx-1 
+        return endidx-1
 
     def __getitem__(self, key):
         return self.color[key]

@@ -28,28 +28,28 @@ def get_options():
    or: %prog [options] --display
    or: %prog [options] --stdout SOURCE
    or: %prog [options] --stdout"""
-    
+
     parser = OptionParser(usage=usage)
-    parser.add_option("-c", "--stdout", dest="stdout", 
-                        help="write converted SVG to stdout", 
+    parser.add_option("-c", "--stdout", dest="stdout",
+                        help="write converted SVG to stdout",
                         action="store_true")
-    parser.add_option("-d", "--display", dest="display", 
-                        help="display the file using default svg viewer. Output is ignored", 
+    parser.add_option("-d", "--display", dest="display",
+                        help="display the file using default svg viewer. Output is ignored",
                         action="store_true")
     parser.add_option("-e", "--extract", dest="area", action="store", type="string",
                       help="extract the area given by ((x1,y1),(x2,y2))")
-    parser.add_option("-p", "--page", dest="page", 
+    parser.add_option("-p", "--page", dest="page",
                         help="for multi-page documents, page number to extract")
-    parser.add_option("-v", "--verbose", dest="verbose", 
-                        help="verbose", 
+    parser.add_option("-v", "--verbose", dest="verbose",
+                        help="verbose",
                         action="store_true")
-                        
-    
+
+
     (options, args) = parser.parse_args()
     # set up rest of options
     optsdict = {}
     optsdict["stdin"] = False
-    
+
     if options.stdout == True:
         if len(args) > 1:
             parser.error("Too many arguments")
@@ -82,20 +82,20 @@ def get_options():
         else:
             optsdict["area"] = None
     return(optsdict, options)
-    
+
 
 if __name__ == "__main__":
 
     optsdict, options = get_options()
-    
+
     import sys, tempfile
     import subprocess, os
-    
+
     gp = GraffleParser()
     gi = GraffleInterpreter()
     svgTarget = TargetSvg()
     gi.setTarget(svgTarget)
-    
+
     graffle_data = ""
     if optsdict["stdin"]:
         graffle_data = sys.stdin.read()
@@ -103,13 +103,12 @@ if __name__ == "__main__":
     else:
         gi.dict = GraffleParser().walkGraffleFile(optsdict["infile"])
 
-    try:        
+    try:
         page = int(options.page or 0)
         gi.extractPage(page=page, bounding_box=optsdict["area"])
     except:
         gi.extractPage()
-    
-    
+
     if options.display == True:
         # write a temp file and open that
         outfile, filename = tempfile.mkstemp(suffix=".svg")

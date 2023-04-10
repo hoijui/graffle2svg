@@ -8,6 +8,13 @@ SPDX-License-Identifier: BSD-3-Clause
 
 # Graffle2Svg _Reloaded_
 
+[![License: BSD-3-Clause](
+    https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](
+    https://spdx.org/licenses/BSD-3-Clause.html)
+[![REUSE status](
+    https://api.reuse.software/badge/github.com/hoijui/graffle2svg)](
+    https://api.reuse.software/info/github.com/hoijui/graffle2svg)
+
 This project is a fork of [`graffle2svg`@google-code](
 http://code.google.com/p/graffle2svg/).
 _BUT_ the whole architecture of the program was changed,

@@ -15,4 +15,10 @@ and a lot of new features were added:
 All these features were not back-ported,
 due to the change of architecture.
 
+## Installation
 
+from source:
+
+```shell
+sudo python setup.py install
+```

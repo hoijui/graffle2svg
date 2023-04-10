@@ -1,3 +1,10 @@
+# SPDX-FileCopyrightText: 2009 Tim Wintle
+# SPDX-FileCopyrightText: 2010 - 2020 Jean-Noël Avila <jn.avila@free.fr>
+# SPDX-FileCopyrightText: 2010 Jean-Noel Avila <jn.avila@free.fr>
+# SPDX-FileCopyrightText: 2015 Stéphane Galland <galland@arakhne.org>
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 """test collector"""
 
 from unittest import TestSuite

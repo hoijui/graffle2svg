@@ -1,7 +1,12 @@
 <?xml version="1.0"?>
+
 <!--
+SPDX-FileCopyrightText: 2009 Tim Wintle
+SPDX-FileCopyrightText: 2023 Robin Vobruba <hoijui.quaero@gmail.com>
+
 SPDX-License-Identifier: BSD-3-Clause
 -->
+
 <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
     <mime-type type="application/x-omnigraffle">
     <comment>Omnigraffle</comment>

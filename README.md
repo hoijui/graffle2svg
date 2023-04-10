@@ -1,4 +1,8 @@
 <!--
+SPDX-FileCopyrightText: 2012 Jean-Noel Avila <jn.avila@free.fr>
+SPDX-FileCopyrightText: 2022 Jean-Noël Avila <jn.avila@free.fr>
+SPDX-FileCopyrightText: 2023 Robin Vobruba <hoijui.quaero@gmail.com>
+
 SPDX-License-Identifier: BSD-3-Clause
 -->
 

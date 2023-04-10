@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# SPDX-License-Identifier: BSD-3-Clause
+
 from unittest import makeSuite, TestCase, TestSuite
 
 from rtf import extractRTFString, ColorTable

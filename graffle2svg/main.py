@@ -19,15 +19,11 @@ from .styles import CascadingStyles
 from . import geom
 from . import fileinfo
 
-
-
-
 class GraffleParser(object):
 
 	def __init__(self):
 		self.doc_dict = None
 		self.g_dom = None
-
 
 	def walkGraffleFile(self,filename):
 		import plistlib
@@ -46,7 +42,6 @@ class GraffleParser(object):
 		self.g_dom = xml.dom.minidom.parseString(xmlstr)
 
 		self.walkGraffleDoc(self.g_dom, **kwargs)
-
 
 	def walkGraffleDoc(self, parent):
 		# want to pass this around like a continuation
@@ -124,8 +119,6 @@ class GraffleParser(object):
 				continue
 			retlist.append(self.ReturnGraffleNode(e))
 		return retlist
-
-
 
 class GraffleInterpreter(object):
 	__slots__=['doc_dict', 'target', 'fileinfo', 'imagelist', 'bounding_box']
@@ -372,7 +365,6 @@ class GraffleInterpreter(object):
 						pts = out_pts
 						"""
 
-
 					self.target.addPath( pts,id=str(graphics["ID"]))
 
 			elif cls == "TableGroup":
@@ -388,7 +380,6 @@ class GraffleInterpreter(object):
 			else:
 				print("Don't know how to display Class \"%s\""%cls)
 
-
 			if graphics.get("Text") is not None:
 				# have to write some text too ...
 				self.target.setGraffleFont(graphics.get("FontInfo"))
@@ -401,8 +392,6 @@ class GraffleInterpreter(object):
 				dy = float(graphics['Text'].get('VerticalPad',0))
 				self.target.addText(rtftext = graphics.get("Text").get("Text",""),
 							     x = x+dx, y = y+dy, width = width-2*dx, height = height-2*dy, fontinfo = graphics.get("FontInfo"),id=graphics["ID"])
-
-
 
 			self.target.style.popScope()
 
@@ -547,7 +536,6 @@ class TargetSvg(object):
 		self.addPath([[x,y+neck_delta], [x+width-neck,y+neck_delta], [x+width-neck,y],
 				      [x+width,y+height/2], [x+width-neck,y+height], [x+width-neck,y+height-neck_delta],
 				      [x,y+height-neck_delta]],closepath=True,**opts)
-
 
 	def addDiamond(self,bounds,**opts):
 		x, y, width, height = [float(a) for a in bounds]
@@ -851,7 +839,6 @@ class TargetSvg(object):
 			for node in def_node.childNodes:
 				self.svg_def.appendChild(node)
 
-
 	def setGraffleStyle(self, style):
 		if style.get("fill") is not None:
 			fill = style.get("fill")
@@ -936,7 +923,6 @@ class TargetSvg(object):
 			self.required_defs.add("DropShadow")
 			self.style["filter"]="url(#DropShadow)"
 
-
 if __name__ == "__main__":
 	gi = GraffleInterpreter()
 	svgTarget = TargetSvg()
@@ -947,4 +933,3 @@ if __name__ == "__main__":
 		f = open("figure"+str(source_index)+".svg","wb")
 		f.write(gi.target.svg)
 		f.close()
-

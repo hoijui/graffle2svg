@@ -77,8 +77,6 @@ class GraffleFilePack(object):
 		fh.close()
 		return result
 
-
 if __name__ == "__main__":
     gfp = GraffleFilePack("gziptest.graffle")
     print(gfp.read())
-

@@ -18,7 +18,6 @@ class CascadingStyles(object):
         self.defaults = defaults
         self.scopes = []
 
-
     def appendScope(self,scope=None):
         """Add a new scope for styles"""
         if scope is None:
@@ -39,7 +38,6 @@ class CascadingStyles(object):
             return self.defaults[k]
         else:
             raise KeyError(str(k))
-
 
     def __setitem__(self, k, v):
         """Set a style in the current scope"""

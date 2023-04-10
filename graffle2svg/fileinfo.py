@@ -23,7 +23,6 @@ class FileInfo(object):
         self.modified = gdict.get("ModificationDate","")
         self.printinfo = PrintInfo(gdict.get("PrintInfo",{}))
 
-
 class PrintInfo(object):
     """Gets the Print information from the file's dict
        - possible confusion over the formatting, so store separately."""

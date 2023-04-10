@@ -30,4 +30,3 @@ if __name__ == "__main__":
 
 	import subprocess, sys
 	subprocess.call(('graffle2svg', "-d", sys.argv[1]))
-

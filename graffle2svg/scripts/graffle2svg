@@ -18,7 +18,6 @@ import sys
 
 from graffle2svg.main import *
 
-
 def get_options():
     from optparse import OptionParser
     usage = """
@@ -43,7 +42,6 @@ def get_options():
     parser.add_option("-v", "--verbose", dest="verbose",
                         help="verbose",
                         action="store_true")
-
 
     (options, args) = parser.parse_args()
     # set up rest of options
@@ -82,7 +80,6 @@ def get_options():
         else:
             optsdict["area"] = None
     return(optsdict, options)
-
 
 if __name__ == "__main__":
 

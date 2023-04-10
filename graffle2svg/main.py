@@ -175,10 +175,10 @@ class GraffleInterpreter(object):
 		return coords
 
 	def extractPage(self, page=0,  background = True, bounding_box=None):
-		if self.doc_dict.get("Sheets") is not None:
-			mydict = self.doc_dict["Sheets"][page]
-		else:
+		if self.doc_dict.get("Sheets") is None:
 			mydict = self.doc_dict
+		else:
+			mydict = self.doc_dict["Sheets"][page]
 
 		if background:
 			if self.fileinfo.fmt_version >= 6:

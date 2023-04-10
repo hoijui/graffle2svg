@@ -11,6 +11,7 @@
    Main entry point for graffle2svg
 """
 
+import re
 import sys
 
 from graffle2svg.main import *
@@ -19,6 +20,7 @@ def get_options():
     from optparse import OptionParser
     usage = """
        %prog [options] SOURCE DESTINATION
+   or: %prog [options] --all-pages SOURCE DESTINATION
    or: %prog [options] DESTINATION
    or: %prog [options] --display SOURCE
    or: %prog [options] --display
@@ -36,6 +38,9 @@ def get_options():
                       help="extract the area given by ((x1,y1),(x2,y2))")
     parser.add_option("-p", "--page", dest="page",
                         help="for multi-page documents, page number to extract")
+    parser.add_option("-a", "--all-pages", dest="all_pages",
+                        help="for multi-page documents, extract all pages, each into a separate SVG file, using suffixes '-0.svg', '-1.svg' and so on",
+                        action="store_true")
     parser.add_option("-v", "--verbose", dest="verbose",
                         help="verbose",
                         action="store_true")
@@ -44,6 +49,9 @@ def get_options():
     # set up rest of options
     optsdict = {}
     optsdict["stdin"] = False
+
+    if options.page and options.all_pages:
+        parser.error("Arguments '--page' and '--all-pages' can not be used together")
 
     if options.stdout :
         if len(args) > 1:
@@ -97,29 +105,41 @@ if __name__ == "__main__":
     else:
         gi.dict = GraffleParser().walkGraffleFile(optsdict["infile"])
 
-    try:
-        page = int(options.page or 0)
-        gi.extractPage(page=page, bounding_box=optsdict["area"])
-    except:
-        gi.extractPage()
-
-    if options.display:
-        # write a temp file and open that
-        outfile, filename = tempfile.mkstemp(suffix=".svg")
-        f = open(filename,"wb")
-        f.write(gi.target.svg)
-        f.close()
-        if os.name == 'mac':
-            subprocess.call(('open', filename))
-        elif os.name == 'nt':
-            subprocess.call(('start', filename))
-        elif os.name == "posix":
-            subprocess.call(('xdg-open', filename))
-
-    elif options.stdout:
-        #print to stdout
-        sys.stdout.buffer.write(gi.target.svg)
+    if options.all_pages:
+        num_pages = gi.getNumPages()
+        suffix_pat = re.compile(r"(\.svg)$", re.IGNORECASE)
+        for page in range(num_pages):
+            out_file = optsdict["outfile"]
+            out_file = suffix_pat.sub("-" + str(page) + r"\1", out_file)
+            gi.extractPage(page=page)
+            f = open(out_file, "wb")
+            f.write(gi.target.svg)
+            f.close()
+            print(out_file + " written.")
     else:
-        f = open(optsdict["outfile"],"wb")
-        f.write(gi.target.svg)
-        f.close()
+        try:
+            page = int(options.page or 0)
+            gi.extractPage(page=page, bounding_box=optsdict["area"])
+        except:
+            gi.extractPage()
+
+        if options.display:
+            # write a temp file and open that
+            outfile, filename = tempfile.mkstemp(suffix=".svg")
+            f = open(filename,"wb")
+            f.write(gi.target.svg)
+            f.close()
+            if os.name == 'mac':
+                subprocess.call(('open', filename))
+            elif os.name == 'nt':
+                subprocess.call(('start', filename))
+            elif os.name == "posix":
+                subprocess.call(('xdg-open', filename))
+
+        elif options.stdout:
+            # print to stdout
+            sys.stdout.buffer.write(gi.target.svg)
+        else:
+            f = open(optsdict["outfile"],"wb")
+            f.write(gi.target.svg)
+            f.close()

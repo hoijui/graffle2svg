@@ -126,6 +126,13 @@ class GraffleInterpreter(object):
 	def getdict(self):
 		return self.doc_dict
 
+	def getNumPages(self):
+		sheets = self.doc_dict.get("Sheets")
+		if sheets is None:
+			return 0
+		else:
+			return len(sheets)
+
 	def setdict(self, doc_dict):
 		self.doc_dict = doc_dict
 		self.fileinfo = None
@@ -157,7 +164,7 @@ class GraffleInterpreter(object):
 
 		return coords
 
-	def extractPage(self, page=0,  background = True, bounding_box=None):
+	def extractPage(self, page=0, background = True, bounding_box=None):
 		if self.doc_dict.get("Sheets") is None:
 			mydict = self.doc_dict
 		else:
